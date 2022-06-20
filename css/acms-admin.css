@@ -10000,3 +10000,15 @@ body .ui-dialog {
 		display: none !important;
 	}
 }
+
+ul{
+	list-style: none;
+}
+
+.modanList{
+	margin-bottom: 20px;
+}
+
+.fontLavel{
+    font-size: 20px;
+}

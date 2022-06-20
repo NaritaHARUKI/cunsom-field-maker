@@ -4,11 +4,11 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import ReactTooltip from 'react-tooltip';
-
 import Highlighter from '../components/highlighter';
 import Field from '../components/field';
 import FieldGroup from '../components/field-group';
 import FieldSource from '../components/field-source';
+import FieldSourceModan from '../components/field-source-modan';
 import FieldConfirmSource from '../components/field-confirm-source';
 import FieldGroupSource from '../components/field-group-source';
 import FieldGroupConfirmSource from '../components/field-group-confirm-source';
@@ -23,6 +23,7 @@ import { STORAGENAME } from '../constants';
 import * as actions from '../actions';
 import columnIcon from '../assets/images/add_column.svg';
 import rowIcon from '../assets/images/add_row.svg';
+import PropTypes from 'prop-types';
 
 class CustomfieldMaker extends Component {
 
@@ -33,8 +34,25 @@ class CustomfieldMaker extends Component {
       editMode: 'source',
       acmscss: false,
       source: '',
-      copied: false
+      situation:'',
+      copied: false,
+      data: '',
+      unit: 'classic',
+      value: '',
+      
     };
+  }
+
+  changeUnit(item){
+    this.setState({unit: item});
+  }
+
+  changeValue(item){
+    this.setState({value: item})
+  }
+
+  changeSource(item){
+    this.setSource({source: item})
   }
 
   componentDidMount() {
@@ -100,14 +118,16 @@ class CustomfieldMaker extends Component {
   }
 
   render() {
-    const { mode, editMode, source, copied } = this.state;
+    const { mode, editMode, source  , copied , unit } = this.state;
     const { actions, customfield, groupitems,
       customunit, unitgroupitems, groupTitle,
       unitGroupTitle, unitGroupName,
       groupName, acmscss, jsValidator, direction } = this.props;
 
     return (
+
       <div className="acms-admin-form">
+
         <div className="acms-admin-form-radio">
           <input type="radio" value="normal" id="input-radio-mode-normal" checked={mode === 'normal'} onChange={this.updateState.bind(this, 'mode', 'normal')} />
           <label htmlFor="input-radio-mode-normal">
@@ -154,7 +174,7 @@ class CustomfieldMaker extends Component {
                   <label htmlFor="acmscss-checkbox">
                     <i className="acms-admin-ico-checkbox" />
                     acms-admin.cssを使用する
-                </label>
+                  </label>
 
                 </div>
                 {(mode === 'normal' || mode === 'group') &&
@@ -166,6 +186,7 @@ class CustomfieldMaker extends Component {
                     </label>
                   </div>
                 }
+
 
                 {mode === 'normal' && <button onClick={this.clearCustomfield.bind(this)} className="acms-admin-btn-admin acms-admin-btn-admin-danger acms-admin-float-right">履歴クリア</button>}
                 {mode === 'group' && <button onClick={this.clearGroupItem.bind(this)} className="acms-admin-btn-admin acms-admin-btn-admin-danger acms-admin-float-right">履歴クリア</button>}
@@ -225,22 +246,25 @@ class CustomfieldMaker extends Component {
                   </div>
                 }
               </div>
+
               {editMode === 'source' &&
-                <Highlighter onSourceGenerated={this.setSource.bind(this)}>
-                  {mode === 'normal' && <FieldSource customfield={customfield} acmscss={acmscss} jsValidator={jsValidator} />}
+                <Highlighter onSourceGenerated={this.setSource.bind(this)} customfield={customfield} acmscss={acmscss} jsValidator={jsValidator} editMode={editMode} mode={mode} groupitems={groupitems} groupTitle={groupTitle} groupName={groupName} direction={direction} customunit={customunit} unitgroupitems={unitgroupitems} unitGroupTitle={unitGroupTitle} unitGroupName={unitGroupName} data={{unit: this.state.unit,changeUnit: this.changeUnit.bind(this)}} newUnit={unit} value={{value: this.state.value , changeValue: this.changeValue.bind(this)}} copy={{source: this.state.source , changeSource: this.changeSource.bind(this)}}>
+                  {mode === 'normal' && <FieldSource customfield={customfield} acmscss={acmscss} jsValidator={jsValidator}/>}
                   {mode === 'group' && <FieldGroupSource groupitems={groupitems} acmscss={acmscss} jsValidator={jsValidator} groupTitle={groupTitle} groupName={groupName} direction={direction} />}
                   {mode === 'unit' && <UnitSource customunit={customunit} acmscss={acmscss} />}
                   {mode === 'unit-group' && <UnitGroupSource unitgroupitems={unitgroupitems} acmscss={acmscss} jsValidator={jsValidator} unitGroupTitle={unitGroupTitle} unitGroupName={unitGroupName} direction={direction} />}
                 </Highlighter>}
-              {editMode === 'preview' &&
-                <div className="customFieldPreview">
+
+              {editMode === 'preview' &&         
+                 <Highlighter onSourceGenerated={this.setSource.bind(this)} customfield={customfield} acmscss={acmscss} jsValidator={jsValidator} editMode={editMode} mode={mode} groupitems={groupitems} groupTitle={groupTitle} groupName={groupName} direction={direction} customunit={customunit} unitgroupitems={unitgroupitems} unitGroupTitle={unitGroupTitle} unitGroupName={unitGroupName} data={{unit: this.state.unit,changeUnit: this.changeUnit.bind(this)}} newUnit={unit} value={{value: this.state.value , changeValue: this.changeValue.bind(this)}} copy={{source: this.state.source , changeSource: this.changeSource.bind(this)}}>
                   {mode === 'normal' && <FieldSource customfield={customfield} acmscss={acmscss} preview />}
-                  {mode === 'group' && <FieldGroupSource groupitems={groupitems} acmscss={acmscss} groupTitle={groupTitle} groupName={groupName} preview direction={direction} />}
-                  {mode === 'unit' && <UnitSource customunit={customunit} acmscss={acmscss} preview />}
+                  {mode === 'group' && <FieldGroupSource groupitems={groupitems} acmscss={acmscss} groupTitle={groupTitle} groupName={groupName} preview direction={direction} editMode={editMode}/>}
+                  {mode === 'unit' && <UnitSource customunit={customunit} acmscss={acmscss} />}
                   {mode === 'unit-group' && <UnitGroupSource unitgroupitems={unitgroupitems} acmscss={acmscss} unitGroupTitle={unitGroupTitle} unitGroupName={unitGroupName} preview direction={direction} />}
-                </div>}
+                  </Highlighter>}
+
               {editMode === 'confirm' &&
-                <Highlighter onSourceGenerated={this.setSource.bind(this)}>
+                <Highlighter onSourceGenerated={this.setSource.bind(this)} customfield={customfield} acmscss={acmscss} jsValidator={jsValidator} editMode={editMode} mode={mode} groupitems={groupitems} groupTitle={groupTitle} groupName={groupName} direction={direction}  customunit={customunit} unitgroupitems={unitgroupitems} unitGroupTitle={unitGroupTitle} unitGroupName={unitGroupName} data={{unit: this.state.unit,changeUnit: this.changeUnit.bind(this)}} newUnit={unit} value={{value: this.state.value , changeValue: this.changeValue.bind(this)}} copy={{source: this.state.source , changeSource: this.changeSource.bind(this)}}>
                   {mode === 'normal' && <FieldConfirmSource customfield={customfield} acmscss={acmscss} />}
                   {mode === 'group' && <FieldGroupConfirmSource groupitems={groupitems} acmscss={acmscss} groupTitle={groupTitle} groupName={groupName} direction={direction} />}
                   {mode === 'unit' && <UnitConfirmSource customunit={customunit} acmscss={acmscss} />}
