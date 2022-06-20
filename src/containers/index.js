@@ -34,6 +34,7 @@ class CustomfieldMaker extends Component {
       editMode: 'source',
       acmscss: false,
       source: '',
+      modanSource: '',
       situation:'',
       copied: false,
       data: '',
@@ -53,6 +54,10 @@ class CustomfieldMaker extends Component {
 
   changeSource(item){
     this.setSource({source: item})
+  }
+
+  changeModanSource(item){
+     this.setSource({modanSource: item})
   }
 
   componentDidMount() {
@@ -86,6 +91,12 @@ class CustomfieldMaker extends Component {
   setSource(source) {
     this.setState({
       source
+    });
+  }
+
+  setModanSource(modanSource) {
+    this.setModanState({
+      modanSource
     });
   }
 

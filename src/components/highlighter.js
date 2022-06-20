@@ -18,9 +18,20 @@ import UnitConfirmSourceMoadan from './unit-confirm-source-modan';
 import UnitGroupSource from './unit-group-source';
 import UnitGroupConfirmSourceModan from './unit-group-confirm-source-modan'
 import UnitGroupSourceModan from './unit-group-source-modan';
-import PropTypes from 'prop-types';
-import { name } from 'file-loader';
-import { idText } from 'typescript';
+
+import FieldColorSource from './field-source-color';
+import FieldConfirmSourceColor from './field-confirm-source-color';
+import FieldGroupSourceColor from './field-group-source-color';
+import FieldGroupConfirmSourceColor from './field-group-confirm-source-color';
+import UnitSourceColor from './unit-source-color';
+import UnitConfirmSourceColor from './unit-confirm-source-color';
+import UnitGroupSourceColor from './unit-group-source-color';
+import UnitGroupConfirmSourceColor from './unit-group-confirm-source-color';
+
+
+
+import { create } from 'react-test-renderer';
+
 
 
 
@@ -35,6 +46,7 @@ export default class Highlighter extends Component {
     super(props);
     this.state = {
       source: '',
+      modanSouece: '',
       type: '',
       value: '',
       situation: ''
@@ -51,8 +63,11 @@ export default class Highlighter extends Component {
   }
 
   buildSource() {
+
     const { source } = this.state;
+    const { modanSouece } = this.state;
     const { children } = this.props;
+    
     let html = renderToStaticMarkup(children);
     html = html.replace(/&quot;/g, '"');
     html = html.replace(/data-tmp="(.*?)"/g, '$1');
@@ -70,7 +85,6 @@ export default class Highlighter extends Component {
       this.props.onSourceGenerated(this.code.innerText);
       this.setState({
         source: this.code.innerText,
-        type: ""
       });
     }
   }
@@ -85,10 +99,6 @@ export default class Highlighter extends Component {
     return this.props.dataSituation();
   }
 
-  normalPreview(classic,modan,customfield,acmscss,jsValidator){
-    if(classic === "classic"){this.state.type = <FieldSource customfield={customfield} acmscss={acmscss} preview/>}
-    if(modan === "modan"){this.state.type = <FieldSourceModan customfield={customfield} acmscss={acmscss}  jsValidator={jsValidator}/>}
-  }
 
 
   render() {
@@ -97,51 +107,68 @@ export default class Highlighter extends Component {
 
       let source = <FieldSource customfield={customfield} acmscss={acmscss} preview/>
 
+      //normal
       let modanElement = <FieldSourceModan customfield={customfield} acmscss={acmscss}  jsValidator={jsValidator}/>;
-      let modanPreview = <FieldSourceModan customfield={customfield} acmscss={acmscss} preview/>;
       let modanElementConfirm = <FieldConfirmSourceModan customfield={customfield} acmscss={acmscss} jsValidator={jsValidator} preview/>
       let modan = arrangeElement(modanElement);
       let modanConfirm = arrangeElement(modanElementConfirm);
 
+      let colorElement = <FieldColorSource customfield={customfield} acmscss={acmscss}  jsValidator={jsValidator}/>
+      let colorElementConfirm = <FieldConfirmSourceColor customfield={customfield} acmscss={acmscss} jsValidator={jsValidator} preview/>
+      let color = arrangeElement(colorElement);
+      let colorConfirm = arrangeElement(colorElementConfirm);
+
+      //group
       let groupSource = <FieldGroupSource groupitems={groupitems} acmscss={acmscss} jsValidator={jsValidator} groupTitle={groupTitle} groupName={groupName} direction={direction} />;
+
       let groupModanElement = <FieldGroupSourceModan groupitems={groupitems} acmscss={acmscss} jsValidator={jsValidator} groupTitle={groupTitle} groupName={groupName} direction={direction}/>
       let groupModanElementConfirm = <FieldGroupConfirmSourceModan groupitems={groupitems} acmscss={acmscss} groupTitle={groupTitle} groupName={groupName} direction={direction}/>
       let group = arrangeElement(groupModanElement);
       let groupModanConfirm = arrangeElement(groupModanElementConfirm);
+
+      let groupColorElement = <FieldGroupSourceColor groupitems={groupitems} acmscss={acmscss} jsValidator={jsValidator} groupTitle={groupTitle} groupName={groupName} direction={direction}/>
+      let groupColorElementConfirm = <FieldGroupConfirmSourceColor groupitems={groupitems} acmscss={acmscss} groupTitle={groupTitle} groupName={groupName} direction={direction}/>
+      let groupColor = arrangeElement(groupColorElement);
+      let groupColorConfirm = arrangeElement(groupColorElementConfirm);
       
+      //unit
       let unitSource = <UnitSource customunit={customunit} acmscss={acmscss} />;
+
       let unitModanElement = <UnitSourceModan customunit={customunit} acmscss={acmscss} />;
       let unitModanElementConfirm = <UnitConfirmSourceMoadan customunit={customunit} acmscss={acmscss} />;
       let unit = arrangeElement(unitModanElement);
       let unitModanConfirm = arrangeElement(unitModanElementConfirm);
 
+      let unitColorElement = <UnitSourceColor customunit={customunit} acmscss={acmscss}/>
+      let unitColorElementConfirm = <UnitConfirmSourceColor customunit={customunit} acmscss={acmscss}/>
+      let unitColor = arrangeElement(unitColorElement);
+      let unitColorConfirm = arrangeElement(unitColorElementConfirm);
+
+      //unit-group
       let unitGroupSource = <UnitGroupSource unitgroupitems={unitgroupitems} acmscss={acmscss} unitGroupTitle={unitGroupTitle} unitGroupName={unitGroupName} preview direction={direction}/>
+
       let unitGroupModanElement = <UnitGroupSourceModan unitgroupitems={unitgroupitems} acmscss={acmscss} unitGroupTitle={unitGroupTitle} unitGroupName={unitGroupName} preview direction={direction}/>
       let unitGroupModanElementConfirm = <UnitGroupConfirmSourceModan unitgroupitems={unitgroupitems} acmscss={acmscss} unitGroupTitle={unitGroupTitle} unitGroupName={unitGroupName} direction={direction}/>
       let unitGroup = arrangeElement(unitGroupModanElement);
       let unitGroupModanConfirm = arrangeElement(unitGroupModanElementConfirm);
+
+      let unitGroupColorElement = <UnitGroupSourceColor unitgroupitems={unitgroupitems} acmscss={acmscss} unitGroupTitle={unitGroupTitle} unitGroupName={unitGroupName} preview direction={direction}/>
+      let unitGroupColorElementConfirm = <UnitGroupConfirmSourceColor unitgroupitems={unitgroupitems} acmscss={acmscss} unitGroupTitle={unitGroupTitle} unitGroupName={unitGroupName} direction={direction}/>
+      let unitGroupColor = arrangeElement(unitGroupColorElement);
+      let unitGroupColorConfirm = arrangeElement(unitGroupColorElementConfirm);
+
+      
 
       var type = newUnit;
       var changeValue = value.value;
       var changeValuePreview = value.value;
       var changeValueConfirm = value.value;
 
-      var changeValueGroup = value.value;
-      var changeValuePreviewGroup = value.value;
-      var changeValueConfirmGroup = value.value;
- 
-      var changeValueUnit = value.value;
-      var changeValuePreviewUnit = value.value;
-      var changeValueConfirmUnit = value.value;
-
-      var changeValueUnitGroup = value.value;
-      var changeValuePreviewUnitGroup = value.value;
-      var changeValueConfirmUnitGroup = value.value;
-
       var stateSource;
       var variableValue;
       var classicValue;
       var modanValue;
+      var colorValue;
 
 
       const handleChange=(e)=>{
@@ -150,29 +177,41 @@ export default class Highlighter extends Component {
           this.setState({type : targetValue[0]});
           this.props.copy.changeSource(targetValue[0]);
           this.props.data.changeUnit(targetValue[1]);
-          this.normalPreview(classic,modan,customfield,acmscss,jsValidator);
       }
 
 
+
+
       if(mode === "normal"){
-        
-        if(this.state.type === ""){
-          this.state.type = this.state.source;
-        }
 
         stateSource = this.state.source;
         normalVarsion(editMode);
+        selectValueSituation(type);
 
-        
-        
+        if(editMode === "preview"){
+          switch(type){
+            case "classic":
+              this.state.type = source;
+              break;
+            case "modan":
+              this.state.type = modanElement;
+              break;
+            case "color":
+              this.state.type = colorElement;
+              break;
+          }
+        }
+
+
         return (
           <div>
             <pre>
             <select onChange={(e) => handleChange(e)} value={variableValue}>
               <option value={classicValue} >クラシック</option>
               <option value={modanValue} >モダン</option>
+              <option value={colorValue}>カラー</option>
             </select>
-            <code className='html hljs xml'>{this.state.type}</code>
+            <code className='html hljs xml'>{((this.state.type === "") ? this.state.source: this.state.type)}</code>
             {<code className='html' ref={(code) => { this.code = code; }} style={{opacity: 0,height: 0,width: 0}}></code>}
            </pre>
           </div>
@@ -180,195 +219,75 @@ export default class Highlighter extends Component {
 
       }
 
-      if(mode === "group"){
+      if(mode === "group"){       
 
-        if(editMode === "source"){
+        stateSource = this.state.source;
+        groupVarsion(editMode);
+        selectValueSituation(type);
 
-          if(this.state.type === ""){
-            this.state.type = this.state.source;
-          }
-
-          switch(type){
-            case "classic":
-              this.state.type = this.state.source;
-              changeValueGroup = [this.state.source,'classic'];
-              break;
-            case "modan":
-              this.state.type = group;
-              changeValueGroup = [group,'modan'];
-              break;
-          }
-
-          return (
-
-            <div>
-              <pre>
-              <select onChange={(e) => handleChange(e)} value={changeValueGroup}>
-                <option value={[this.state.source,"classic"]}>クラシック</option>
-                <option value={[group,"modan"]}>モダン</option>
-              </select>
-              <code className='html hljs xml'>{this.state.type}</code>
-              {<code className='html' ref={(code) => { this.code = code; }} style={{opacity: 0,height: 0,width: 0}}></code>}
-             </pre>
-            </div>
-
-          );
-        }else if(editMode === "confirm"){
-
-          if(this.state.type === ""){
-            this.state.type = this.state.source;
-          }
-
-          switch(type){
-            case "classic":
-              this.state.type = this.state.source;
-              changeValueConfirmGroup = [this.state.source,'classic'];
-              break;
-            case "modan":
-              this.state.type = groupModanConfirm;
-              changeValueConfirmGroup = [groupModanConfirm,'modan'];
-              break;
-          }
-
-          return (
-            <div>
-              <pre>
-              <select onChange={(e) => handleChange(e)} value={changeValueConfirmGroup}>
-                <option value={[this.state.source,"classic"]} >クラシック</option>
-                <option value={[groupModanConfirm,"modan"]} >モダン</option>
-              </select>
-              <code className='html hljs xml'>{this.state.type}</code>
-              {<code className='html' ref={(code) => { this.code = code; }} style={{opacity: 0,height: 0,width: 0}}></code>}
-             </pre>
-            </div>
-          );
-
-
-        }else if(editMode === "preview"){
-  
+        if(editMode === "preview"){
           switch(type){
             case "classic":
               this.state.type = groupSource;
-              changeValuePreviewGroup = ['classic','classic'];
               break;
             case "modan":
               this.state.type = groupModanElement;
-              changeValuePreviewGroup = ['modan','modan'];
               break;
+              case "color":
+                this.state.type = groupColorElement;
+                break;
           }
-
-  
-          return (
-  
-            <div>
-              <pre>
-            <select onChange={(e) => handleChange(e)} value={changeValuePreviewGroup}>
-                <option value={['classic',"classic"]}>クラシック</option>
-                <option value={['modan','modan']}>モダン</option>
-            </select>
-           <div className="customFieldPreview">
-              {this.state.type}
-              {<code className='html' ref={(code) => { this.code = code; }} style={{opacity: 0,height: 0,width: 0}}></code>}
-           </div>
-             </pre>
-  
-           </div>
-            
-          ); 
-
         }
+
+        return (
+          <div>
+            <pre>
+            <select onChange={(e) => handleChange(e)} value={variableValue}>
+              <option value={classicValue} >クラシック</option>
+              <option value={modanValue} >モダン</option>
+              <option value={colorValue}>カラー</option>
+            </select>
+            <code className='html hljs xml'>{((this.state.type === "") ? this.state.source : this.state.type)}</code>
+            {<code className='html' ref={(code) => { this.code = code; }} style={{opacity: 0,height: 0,width: 0}}></code>}
+           </pre>
+          </div>
+        );
       }
 
       if(mode === "unit"){
 
-        if(editMode === "source"){
+        stateSource = this.state.source;
+        unitVarsion(editMode);
+        selectValueSituation(type);
 
-          if(this.state.type === ""){
-            this.state.type = this.state.source;
-          }
-
-          switch(type){
-            case "classic":
-              this.state.type = this.state.source;
-              changeValueUnit = [this.state.source,'classic'];
-              break;
-            case "modan":
-              this.state.type = unit;
-              changeValueUnit = [unit,'modan'];
-              break;
-          }
-
-          return(
-            <div>
-                <pre>
-                <select onChange={(e) => handleChange(e)} value={changeValueUnit}>
-                  <option value={[this.state.source,"classic"]}>クラシック</option>
-                  <option value={[unit,"modan"]}>モダン</option>
-                </select>
-                <code className='html hljs xml'>{this.state.type}</code>
-                {<code className='html' ref={(code) => { this.code = code; }} style={{opacity: 0,height: 0,width: 0}}></code>}
-               </pre>
-            </div>
-          )
-        }else if(editMode === "confirm"){
-
-          if(this.state.type === ""){
-            this.state.type = this.state.source;
-          }
-
-          switch(type){
-            case "classic":
-              this.state.type = this.state.source;
-              changeValueConfirmUnit = [this.state.source,'classic'];
-              break;
-            case "modan":
-              this.state.type = unitModanConfirm;
-              changeValueConfirmUnit = [unitModanConfirm,'modan'];
-              break;
-          }
-
-          return (
-            <div>
-              <pre>
-              <select onChange={(e) => handleChange(e)} value={changeValueConfirmUnit}>
-                <option value={[this.state.source,"classic"]} >クラシック</option>
-                <option value={[unitModanConfirm,"modan"]} >モダン</option>
-              </select>
-              <code className='html hljs xml'>{this.state.type}</code>
-              {<code className='html' ref={(code) => { this.code = code; }} style={{opacity: 0,height: 0,width: 0}}></code>}
-             </pre>
-            </div>
-          );
-        } else if(editMode === "preview"){
-
+        if(editMode === "preview"){
           switch(type){
             case "classic":
               this.state.type = unitSource;
-              changeValuePreviewUnit = ['classic','classic'];
               break;
             case "modan":
               this.state.type = unitModanElement;
-              changeValuePreviewUnit = ['modan','modan'];
+              break;
+            case "color":
+              this.state.type = unitColorElement;
               break;
           }
-
-          return(
-
-            <div>
-              <pre>
-            <select onChange={(e) => handleChange(e)} value={changeValuePreviewUnit}>
-                <option value={['classic',"classic"]}>クラシック</option>
-                <option value={['modan',"modan"]}>モダン</option>
-            </select>
-           <div className="customFieldPreview">
-              {this.state.type}
-              {<code className='html' ref={(code) => { this.code = code; }} style={{opacity: 0,height: 0,width: 0}}></code>}
-           </div>
-             </pre>
-  
-           </div>
-          )
         }
+        
+        return (
+          <div>
+            <pre>
+            <select onChange={(e) => handleChange(e)} value={variableValue}>
+              <option value={classicValue} >クラシック</option>
+              <option value={modanValue} >モダン</option>
+              <option value={colorValue}>カラー</option>
+            </select>
+            <code className='html hljs xml'>{((this.state.type === "") ? this.state.source : this.state.type)}</code>
+            {<code className='html' ref={(code) => { this.code = code; }} style={{opacity: 0,height: 0,width: 0}}></code>}
+           </pre>
+          </div>
+        );
+        
       }
 
       if(mode === "unit-group"){
@@ -490,35 +409,7 @@ export default class Highlighter extends Component {
         element = element.replace(/&gt;/g, '>');
         return element;
       }
-
-      function judgeMode(mode,editMode){
-
-        var judgeMode;
-
-        if(editMode === ""){
-          editMode = "source";
-        }
-
-        switch(mode){
-          
-          case "normal":
-            judgeMode = ["normal",editMode];
-            return judgeMode;
-
-          case "group":
-            judgeMode = ["group",editMode];
-            return judgeMode;
-
-          case "unit":
-            judgeMode = ["unit",editMode];
-            return judgeMode;
-
-          case "unit-group":
-            judgeMode = ["unit-group",editMode];
-            return judgeMode;
-        }
-        
-      }
+     
 
       function normalVarsion(editMode) {
         switch(editMode){
@@ -526,20 +417,85 @@ export default class Highlighter extends Component {
             variableValue = changeValue;
             classicValue =  [stateSource,"classic"];
             modanValue = [modan,"modan"];
+            colorValue = [color,"color"];
             break;
           case "confirm":
             variableValue = changeValueConfirm;
             classicValue = [stateSource,"classic"];
             modanValue = [modanConfirm,"modan"];
+            colorValue = [colorConfirm,"color"];
             break;
           case "preview":
             variableValue = changeValuePreview;
             classicValue = ["classic","classic"];
             modanValue = ["modan","modan"];
+            colorValue = ["color","color"];
             break;
         }
 
       }
+
+      function groupVarsion(editMode){
+        switch(editMode){
+          case "source":
+            variableValue = changeValue;
+            classicValue =  [stateSource,"classic"];
+            modanValue = [group,"modan"];
+            colorValue = [groupColor,"color"];
+            break;
+          case "confirm":
+            variableValue = changeValueConfirm;
+            classicValue = [stateSource,"classic"];
+            modanValue = [groupModanConfirm,"modan"];
+            colorValue = [groupColorConfirm,"color"];
+            break;
+          case "preview":
+            variableValue = changeValuePreview;
+            classicValue = ["classic","classic"];
+            modanValue = ["modan","modan"];
+            colorValue = ["color","color"];
+            break;
+        }
+      }
+
+      function unitVarsion(editMode){
+        switch(editMode){
+          case "source":
+            variableValue = changeValue;
+            classicValue =  [stateSource,"classic"];
+            modanValue = [unit,"modan"];
+            colorValue = [unitColor,"color"];
+            break;
+          case "confirm":
+            variableValue = changeValueConfirm;
+            classicValue = [stateSource,"classic"];
+            modanValue = [unitModanConfirm,"modan"];
+            colorValue = [unitColorConfirm,"color"];
+            break;
+          case "preview":
+            variableValue = changeValuePreview;
+            classicValue = ["classic","classic"];
+            modanValue = ["modan","modan"];
+            colorValue = ["color","color"];
+            break;
+        }
+      }
+
+      function selectValueSituation(type){
+        switch(type){
+          case "classic":
+            variableValue = classicValue;
+            break;
+          case "modan":
+            variableValue = modanValue;
+            break;
+          case "color":
+            variableValue = colorValue;
+        }
+      }
+
+      
+
 
 
 

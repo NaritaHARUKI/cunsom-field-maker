@@ -10012,3 +10012,10 @@ ul{
 .fontLavel{
     font-size: 20px;
 }
+
+.colorList{
+	background-color: #e5e5e5;
+    width: 95%;
+    margin: 5px auto;
+	padding: 10px;
+}
