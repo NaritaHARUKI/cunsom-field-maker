@@ -2170,9 +2170,29 @@ label {
 	color: #C91032;
 }
 
+.formLavel{
+	display: block;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    padding: 10px 10px 0 10px;
+    font-weight: bold;
+    text-align: left;
+}
+
 .acms-admin-text-error {
 	display: block;
 	color: #F00;
+}
+
+.acms-admin-text-error-modan{
+	margin: 0 5px;
+    padding: 2px 8px;
+    color: #fff;
+    background: #c41134;
+    border-radius: 3px;
+    font-size: 12px;
 }
 
 .acms-admin-form-width-full {

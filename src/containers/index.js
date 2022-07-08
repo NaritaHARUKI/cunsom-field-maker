@@ -5,24 +5,25 @@ import { bindActionCreators } from 'redux';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import ReactTooltip from 'react-tooltip';
 import Highlighter from '../components/highlighter';
-import Field from '../components/field';
-import FieldGroup from '../components/field-group';
-import FieldSource from '../components/field-source';
-import FieldSourceModan from '../components/field-source-modan';
-import FieldConfirmSource from '../components/field-confirm-source';
-import FieldGroupSource from '../components/field-group-source';
-import FieldGroupConfirmSource from '../components/field-group-confirm-source';
-import Unit from '../components/unit';
-import UnitSource from '../components/unit-source';
-import UnitConfirmSource from '../components/unit-confirm-source';
-import UnitGroup from '../components/unit-group';
-import UnitGroupSource from '../components/unit-group-source';
-import UnitGroupConfirmSource from '../components/unit-group-confirm-source';
+import Field from '../components/normal/field';
+import FieldGroup from '../components/group/field-group';
+
+import FieldSource from '../components/normal/field-source';
+import FieldConfirmSource from '../components/normal/field-confirm-source';
+import FieldGroupSource from '../components/group/field-group-source';
+import FieldGroupConfirmSource from '../components/group/field-group-confirm-source';
+import Unit from '../components/unit/unit';
+import UnitSource from '../components/unit/unit-source';
+import UnitConfirmSource from '../components/unit/unit-confirm-source';
+import UnitGroup from '../components/unit-group/unit-group';
+import UnitGroupSource from '../components/unit-group/unit-group-source';
+import UnitGroupConfirmSource from '../components/unit-group/unit-group-confirm-source';
 import Notify from '../components/notify';
 import { STORAGENAME } from '../constants';
 import * as actions from '../actions';
 import columnIcon from '../assets/images/add_column.svg';
 import rowIcon from '../assets/images/add_row.svg';
+import Think from '../components/think';
 import PropTypes from 'prop-types';
 
 class CustomfieldMaker extends Component {
@@ -94,11 +95,6 @@ class CustomfieldMaker extends Component {
     });
   }
 
-  setModanSource(modanSource) {
-    this.setModanState({
-      modanSource
-    });
-  }
 
   clearCustomfield() {
     const { actions } = this.props;
@@ -205,7 +201,7 @@ class CustomfieldMaker extends Component {
                 {mode === 'unit-group' && <button onClick={this.clearUnitGroupItem.bind(this)} className="acms-admin-btn-admin acms-admin-btn-admin-danger acms-admin-float-right">履歴クリア</button>}
                 {editMode !== 'preview' &&
                   <div style={{ display: 'inline-block', position: 'relative', float: 'right', marginRight: '10px' }}>
-                    <CopyToClipboard text={source} onCopy={() => this.setState({ copied: true })}>
+                    <CopyToClipboard text={typeof(source) === "object" ? source.source : source} onCopy={() => this.setState({ copied: true })}>
                       <button className="acms-admin-btn-admin">コードをコピー</button>
                     </CopyToClipboard>
                     <Notify message="クリップボードにコピーしました" show={copied} onFinish={() => { this.setState({ copied: false }); }} />

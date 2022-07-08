@@ -3,7 +3,7 @@ import classnames from 'classnames';
 
 const ConditionalWrap = ({ condition, wrap, children }) => condition ? wrap(children) : children;
 
-export default class UnitGroupConfirmSourceColor extends Component {
+export default class UnitGroupConfirmSource extends Component {
 
   wrapTable(children, title) {
     const { direction } = this.props;
@@ -17,37 +17,65 @@ export default class UnitGroupConfirmSourceColor extends Component {
   }
 
   render() {
-    const { unitGroupTitle, unitGroupName, unitgroupitems, acmscss, direction } = this.props;
+    const { unitGroupTitle, unitGroupName, unitgroupitems, acmscss, direction, value} = this.props;
+    
+    let Table = "table";
+    let Tr = "tr";
+    let Th = "th";
+    let Td = "td";
+
+    switch(value){
+      case "classic":
+        Table = "table";
+        Tr = "tr";
+        Th = "th";
+        Td = "label";
+        break;
+      case "modan":
+        Table = "ul";
+        Tr = "li";
+        Th = "div";
+        Td = "label";
+        break;
+      case "color":
+        Table = "ul";
+        Tr = "li";
+        Th = "div";
+        Td = "label";
+        break;
+    }
+
+
     return (<Fragment>
       {unitGroupTitle && <h2 className={classnames({ 'acms-admin-admin-title2': acmscss })}>{unitGroupTitle}</h2>}
-      <ul className={classnames({ 'adminTable acms-admin-table-admin-edit acms-admin-table-admin-edit-bordered': acmscss })}>
+      <Table className={classnames({ 'adminTable acms-admin-table-admin-edit acms-admin-table-admin-edit-bordered': acmscss })}>
         {direction === 'horizontal' &&
           <thead className={classnames({ 'acms-admin-hide-sp': acmscss })}>
-            <li>
+            <Tr>
               <Fragment>
-                {unitgroupitems.map(item => (<th className={classnames({ 'acms-admin-table-left': acmscss })}>{item.title}</th>))}
+                {unitgroupitems.map(item => (<Th className={classnames({ 'acms-admin-table-left': acmscss })}>{item.title}</Th>))}
               </Fragment>
-            </li>
+            </Tr>
           </thead>
         }
         <tbody>
           {`<!-- BEGIN ${unitGroupName}:loop -->`}
-          <li>
+          <Tr>
             <ConditionalWrap
               condition={direction === 'vertical'}
               wrap={children => <td><table>{children}</table></td>}
             >
               {unitgroupitems.map((item) => {
                 if (item.type === 'text') {
-                  return this.wrapTable(<label>
+                  return this.wrapTable(<Td>
                     {`{${item.name}}`}
-                  </label>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'textarea') {
-                  return this.wrapTable(<label>
+                  return this.wrapTable(<Td>
                     {`{${item.name}}[escape|nl2br]`}
-                  </label>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'select') {
-                  return this.wrapTable(<div>
+                  return this.wrapTable(<Td>
                     {item.option.map((option) => {
                       if (!option.label) {
                         return null;
@@ -58,9 +86,9 @@ export default class UnitGroupConfirmSourceColor extends Component {
                         {'<!-- END_IF -->'}
                       </div>);
                     })}
-                  </div>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'radio') {
-                  return this.wrapTable(<li>
+                  return this.wrapTable(<Td>
                     {item.option.map((option) => {
                       if (!option.label) {
                         return null;
@@ -69,7 +97,7 @@ export default class UnitGroupConfirmSourceColor extends Component {
                       ${option.label}
                       <!-- END_IF -->`);
                     })}
-                  </li>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'file') {
                   let src = '/images/fileicon/';
                   let alt = 'file';
@@ -79,21 +107,21 @@ export default class UnitGroupConfirmSourceColor extends Component {
                   } else {
                     src += 'file.svg';
                   }
-                  return this.wrapTable(<li>
+                  return this.wrapTable(<Td>
                     {`<!-- BEGIN ${item.name}@path:veil -->`}
                     <a href={`%{ARCHIVES_DIR}{${item.name}@path}`}>
                       <img src={src} width="64" height="64" alt={alt} />
                     </a>
                     {`<!-- END ${item.name}@path:veil -->`}
-                  </li>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'image') {
-                  return this.wrapTable(<li>
+                  return this.wrapTable(<Td>
                     {`<!-- BEGIN ${item.name}@path:veil -->`}
                     <img src={`%{ARCHIVES_DIR}{${item.name}@path}`} width="64" height="64" alt={`{${item.name}@alt}`} />
                     {`<!-- END ${item.name}@path:veil -->`}
-                  </li>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'media') {
-                  return this.wrapTable(<li>
+                  return this.wrapTable(<Td>
                     {`<!-- BEGIN_IF [{${item.name}@type}/eq/file] -->`}
                     <a href={`{${item.name}@path}`}>
                       <img
@@ -123,26 +151,26 @@ export default class UnitGroupConfirmSourceColor extends Component {
                   <p>{`{${item.name}@text}`}</p>
                   {'<!-- END_IF -->'}
                   {'<!-- END_IF -->'}
-                  </li>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'lite-editor') {
-                  return this.wrapTable(<li>
+                  return this.wrapTable(<Td>
                     {`{${item.name}}[raw]`}
-                  </li>, item.name);
+                  </Td>, item.name);
                 } else if (item.type === 'rich-editor') {
-                  return this.wrapTable(<li>
+                  return this.wrapTable(<Td>
                     {`{${item.name}@html}[raw]`}
-                  </li>, item.name);
+                  </Td>, item.name);
                 } else if (item.type === 'table') {
-                  return this.wrapTable(<li>
+                  return this.wrapTable(<Td>
                     {`{${item.name}}[raw]`}
-                  </li>, item.name);
+                  </Td>, item.name);
                 }
               })}
             </ConditionalWrap>
-          </li>
+          </Tr>
           {`<!-- END ${unitGroupName}:loop -->`}
         </tbody>
-      </ul>
+      </Table>
     </Fragment>);
   }
 }

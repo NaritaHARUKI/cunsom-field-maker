@@ -3,7 +3,7 @@ import classnames from 'classnames';
 
 const ConditionalWrap = ({ condition, wrap, children }) => (condition ? wrap(children) : children);
 
-export default class UnitGroupSourceModan extends Component {
+export default class UnitGroupSource extends Component {
   constructor(props) {
     super(props);
   }
@@ -17,13 +17,34 @@ export default class UnitGroupSourceModan extends Component {
   }
 
   wrapTable(children, title) {
-    const { direction } = this.props;
+    const { direction , value} = this.props;
+
+    let Tr = "tr";
+    let Th = "th";
+
+    
+    switch(value){
+       case "classic":
+          Tr = "tr";
+          Th = "th";
+         break;
+        case "modan":
+          Tr = "div";
+          Th = "label";
+         break;
+        case "color":
+          Tr = "div";
+          Th = "label";
+          break;
+    }
+
+
     return (<ConditionalWrap
       condition={direction === 'vertical'}
-      wrap={children => <div>
-        <label>{title}</label>
+      wrap={children => <Tr>
+        <Th>{title}</Th>
         {children}
-      </div>}
+      </Tr>}
     >{children}</ConditionalWrap>);
   }
 
@@ -54,52 +75,78 @@ export default class UnitGroupSourceModan extends Component {
   }
 
   render() {
-    const { unitGroupName, unitGroupTitle, acmscss, unitgroupitems, preview, direction } = this.props;
+    const { unitGroupName, unitGroupTitle, acmscss, unitgroupitems, preview, direction, value} = this.props;
     const groupLength = unitgroupitems.length;
+
+    let Table = "table";
+    let Tr = "tr";
+    let Th = "th";
+    let Td = "td";
+
+    switch(value){
+      case "classic":
+        Table = "table";
+        Tr = "tr";
+        Th = "th";
+        Td = "label";
+        break;
+      case "modan":
+        Table = "ul";
+        Tr = "li";
+        Th = "div";
+        Td = "label";
+        break;
+      case "color":
+        Table = "ul";
+        Tr = "li";
+        Th = "div";
+        Td = "label";
+        break;
+    }
 
     return (<Fragment>
       {unitGroupTitle && <h2 className={classnames({ 'acms-admin-admin-title2': acmscss })}>{unitGroupTitle}</h2>}
-      {unitGroupName && <ul
+      {unitGroupName && <Table
         ref={table => this.table = table}
         className={classnames('js-fieldgroup-sortable', { 'adminTable acms-admin-table-admin-edit': acmscss })}
       >
         <thead className={classnames({ 'acms-admin-hide-sp': acmscss })}>
-          <li>
-            <div className={classnames({ 'acms-admin-table-left acms-admin-admin-config-table-item-handle': acmscss })}>&nbsp;</div>
+          <Tr>
+            <Th className={classnames({ 'acms-admin-table-left acms-admin-admin-config-table-item-handle': acmscss })}>&nbsp;</Th>
             {direction === 'horizontal' &&
               <Fragment>
-                {unitgroupitems.map(item => (<div className={classnames({ 'acms-admin-table-left': acmscss })}>
+                {unitgroupitems.map(item => (<Th className={classnames({ 'acms-admin-table-left': acmscss })}>
                   {item.title}
                   {item.tooltip && <i className="acms-admin-icon-tooltip js-acms-tooltip" data-acms-tooltip={item.tooltip} />}
-                </div>))}
+                </Th>))}
               </Fragment>
             }
-            {direction === 'vertical' && <th />}
-            <div className={classnames({ 'acms-admin-table-left acms-admin-admin-config-table-action': acmscss })}>削除</div>
-          </li>
+            {direction === 'vertical' && <Th />}
+            <Th className={classnames({ 'acms-admin-table-left acms-admin-admin-config-table-action': acmscss })}>削除</Th>
+          </Tr>
         </thead>
         <tbody>
           {preview ? null : `<!-- BEGIN ${unitGroupName}:loop -->`}
-          <li className="sortable-item">
-            <div className="item-handle acms-admin-table-nowrap">
+          <Tr className="sortable-item">
+            <Td className="item-handle acms-admin-table-nowrap">
               {acmscss && <i className="acms-admin-icon-sort" />}
-            </div>
+            </Td>
             <ConditionalWrap
               condition={direction === 'vertical'}
               wrap={children => <td><table>{children}</table></td>}
             >
               {unitgroupitems.map((item) => {
                 if (item.type === 'text') {
-                  return this.wrapTable(<li>
+                  return this.wrapTable(<Td>
                     <input type="text" name={`${item.name}{id}[]`} value={`{${item.name}}`} className={classnames({ 'acms-admin-form-width-full': acmscss })} />
-                  </li>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'textarea') {
-                  return this.wrapTable(<li>
+                  return this.wrapTable(<Td>
                     <textarea name={`${item.name}{id}[]`} className={classnames({ 'acms-admin-form-width-full': acmscss })}>{`{${item.name}}`}</textarea>
                     {this.renderValidator(item, acmscss)}
-                  </li>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'select') {
-                  return this.wrapTable(<li>
+                  return this.wrapTable(<Td>
                     <select name={`${item.name}{id}[]`} className={classnames({ 'acms-admin-form-width-full': acmscss })}>
                       <option value="" />
                       {item.option.map((option) => {
@@ -109,9 +156,9 @@ export default class UnitGroupSourceModan extends Component {
                         return <option value={option.value} data-tmp={`{${item.name}:selected#${option.value}}`}>{option.label}</option>;
                       })}
                     </select>
-                  </li>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'radio') {
-                  return this.wrapTable(<li>
+                  return this.wrapTable(<Td>
                     {item.option.map((option) => {
                       if (!option.label) {
                         return null;
@@ -125,7 +172,7 @@ export default class UnitGroupSourceModan extends Component {
                       </div>);
                     })}
                     {this.renderValidator(item, acmscss)}
-                  </li>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'file') {
                   let src = '/images/fileicon/';
                   let alt = 'file';
@@ -136,7 +183,7 @@ export default class UnitGroupSourceModan extends Component {
                     src += 'file.svg';
                   }
 
-                  return this.wrapTable(<li>
+                  return this.wrapTable(<Td>
                     {preview ? null : `<!-- BEGIN_IF [{${item.name}@path}/nem] -->`}
                     <div className={classnames({ 'acms-admin-form-checkbox': acmscss })}>
                       <input type="checkbox" name={`${item.name}{id}@edit[]`} value="delete" id={`input-checkbox-${item.name}{id}@edit[]`} />
@@ -154,7 +201,7 @@ export default class UnitGroupSourceModan extends Component {
                     {item.fileNameMethod === 'asis' && <input type="hidden" name={`${item.name}{id}@filename[]`} value="@rawfilename" />}
                     <input type="file" name={`${item.name}{id}[]`} />
                     {this.renderValidator(item, acmscss)}
-                  </li>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'image') {
                   const style = {};
                   if (item.normalSize) {
@@ -162,7 +209,7 @@ export default class UnitGroupSourceModan extends Component {
                   }
                   const hiddenStyle = Object.assign({}, style, { display: 'none' });
 
-                  return this.wrapTable(<div className={classnames({ 'js-img_resize_cf': item.resize })}>
+                  return this.wrapTable(<Td className={classnames({ 'js-img_resize_cf': item.resize })}>
                     {preview ? null : `<!-- BEGIN_IF [{${item.name}@path}/nem] -->`}
                     <div>
                       <img
@@ -189,9 +236,9 @@ export default class UnitGroupSourceModan extends Component {
                     {item.large && item.largeSize && <input type="hidden" name={`${item.name}{id}@${item.large}[]`} value={item.largeSize} />}
                     {item.square && item.squareSize && <input type="hidden" name={`${item.name}{id}@${item.square}[]`} value={item.squareSize} />}
                     {this.renderValidator(item, acmscss)}
-                  </div>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'media') {
-                  return this.wrapTable(<div className="js-media-field">
+                  return this.wrapTable(<Td className="js-media-field">
                     {!item.useDropArea && <Fragment>
                       <div>
                         {`<!-- BEGIN_IF [{${item.name}@thumbnail}/nem] -->`}
@@ -240,14 +287,14 @@ export default class UnitGroupSourceModan extends Component {
                     </Fragment>}
                     <input type="hidden" name={`${item.name}{id}[]`} value={preview ? '' : `{${item.name}}`} className="js-value" />
                     {this.renderValidator(item, acmscss)}
-                  </div>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'lite-editor') {
-                  return this.wrapTable(<li>
+                  return this.wrapTable(<Td>
                     <textarea name={`${item.name}{id}[]`} className={classnames('js-lite-editor-field', { 'acms-admin-form-width-full': acmscss })}>{`{${item.name}}`}</textarea>
                     {this.renderValidator(item, acmscss, false)}
-                  </li>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'rich-editor') {
-                  return this.wrapTable(<li>
+                  return this.wrapTable(<Td>
                     <ConditionalWrap
                       condition={item.useExpand} wrap={children => <div className="js-expand js-acms-expand">
                         <div className="js-acms-expand-inner">
@@ -263,9 +310,9 @@ export default class UnitGroupSourceModan extends Component {
                         <input className="js-smartblock-body" type="hidden" name={`${item.name}{id}[]`} value={`{${item.name}@html}`} />
                       </div>
                     </ConditionalWrap>
-                  </li>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'table') {
-                  return this.wrapTable(<li>
+                  return this.wrapTable(<Td>
                     <div className="js-editable-table-field">
                       <div className="js-editable-table">
                         {preview ? null : `<!-- BEGIN_IF [{${item.name}}[delnl]/nem] -->\n`}
@@ -285,39 +332,39 @@ export default class UnitGroupSourceModan extends Component {
                         <input type="hidden" className="js-editable-table-dest" value={`{${item.name}}`} name={`${item.name}{id}[]`} />
                       </div>
                     </div>
-                  </li>, item.title);
+                  </Td>, item.title);
                 }
               })}
             </ConditionalWrap>
-            <li className="acms-admin-table-nowrap">
+            <Td className="acms-admin-table-nowrap">
               <input type="button" className={classnames('item-delete', { 'acms-admin-btn-admin acms-admin-btn-admin-danger': acmscss })} value="削除" />
-            </li>
-          </li>
+            </Td>
+          </Tr>
           {preview ? null : `<!-- END ${unitGroupName}:loop -->`}
-          {preview ? null : <li className="sortable-item item-template">
-            <td className="item-handle acms-admin-table-nowrap">{acmscss && <i className="acms-admin-icon-sort" />}</td>
+          {preview ? null : <Tr className="sortable-item item-template">
+            <Td className="item-handle acms-admin-table-nowrap">{acmscss && <i className="acms-admin-icon-sort" />}</Td>
             <ConditionalWrap
               condition={direction === 'vertical'}
               wrap={children => <td><table>{children}</table></td>}
             >
               {unitgroupitems.map((item) => {
                 if (item.type === 'text') {
-                  return this.wrapTable(<li>
+                  return this.wrapTable(<Td>
                     <input type="text" name={`${item.name}{id}[]`} value="" className={classnames({ 'acms-admin-form-width-full': acmscss })} />
-                  </li>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'textarea') {
-                  return this.wrapTable(<li>
+                  return this.wrapTable(<Td>
                     <textarea name={`${item.name}{id}[]`} className={classnames({ 'acms-admin-form-width-full': acmscss })} />
-                  </li>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'select') {
-                  return this.wrapTable(<li>
+                  return this.wrapTable(<Td>
                     <select name={`${item.name}{id}[]`} className={classnames({ 'acms-admin-form-width-full': acmscss })}>
                       <option value="" />
                       {item.option.map(option => (<option value={option.value}>{option.label}</option>))}
                     </select>
-                  </li>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'radio') {
-                  return this.wrapTable(<li>
+                  return this.wrapTable(<Td>
                     {item.option.map(option => (
                       <div className={classnames({ 'acms-admin-form-radio': acmscss })}>
                         <input type="radio" name={`${item.name}{id}[]`} value={option.value} id={`input-radio-${item.name}-${option.value}`} />
@@ -327,15 +374,15 @@ export default class UnitGroupSourceModan extends Component {
                         </label>
                       </div>
                     ))}
-                  </li>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'file') {
-                  return this.wrapTable(<li>
+                  return this.wrapTable(<Td>
                     <input type="file" name={`${item.name}{id}[]`} />
                     {item.extension && <input type="hidden" name={`${item.name}{id}@extension[]`} value="{extension}" />}
                     {item.fileNameMethod === 'random' && item.fileName && <input type="hidden" name={`${item.name}{id}@filename[]`} value="" />}
                     {item.fileNameMethod === 'fix' && item.fileName && <input type="hidden" name={`${item.name}{id}@filename[]`} value={item.fileName} />}
                     {item.fileNameMethod === 'asis' && <input type="hidden" name={`${item.name}{id}@filename[]`} value="@rawfilename" />}
-                  </li>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'image') {
                   const style = {};
                   if (item.normalSize) {
@@ -343,7 +390,7 @@ export default class UnitGroupSourceModan extends Component {
                   }
                   const hiddenStyle = Object.assign({}, style, { display: 'none' });
 
-                  return this.wrapTable(<td className={classnames({ 'js-img_resize_cf': item.resize })}>
+                  return this.wrapTable(<Td className={classnames({ 'js-img_resize_cf': item.resize })}>
                     <img src="" style={hiddenStyle} className="js-img_resize_preview" />
                     <input type="file" name={`${item.name}{id}[]`} style={style} /><br />
                     {item.alt && <div>代替テキスト:<input type="text" name={`${item.name}{id}@alt[]`} value="" size="40" /></div>}
@@ -351,9 +398,9 @@ export default class UnitGroupSourceModan extends Component {
                     {item.tiny && <input type="hidden" name={`${item.name}{id}@${item.tiny}[]`} value={item.tinySize} />}
                     {item.large && <input type="hidden" name={`${item.name}{id}@${item.large}[]`} value={item.largeSize} />}
                     {item.square && <input type="hidden" name={`${item.name}{id}@${item.square}[]`} value={item.squareSize} />}
-                  </td>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'media') {
-                  return this.wrapTable(<div className="js-media-field">
+                  return this.wrapTable(<Td className="js-media-field">
                     {!item.useDropArea && <Fragment>
                       <div>
                         <img
@@ -384,14 +431,14 @@ export default class UnitGroupSourceModan extends Component {
                       </div>
                     </Fragment>}
                     <input type="hidden" name={`${item.name}{id}[]`} value="" className="js-value" />
-                  </div>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'lite-editor') {
-                  return this.wrapTable(<li>
+                  return this.wrapTable(<Td>
                     <textarea name={`${item.name}{id}[]`} className={classnames('js-lite-editor-field', { 'acms-admin-form-width-full': acmscss })} />
                     {this.renderValidator(item, acmscss, false)}
-                  </li>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'rich-editor') {
-                  return this.wrapTable(<li>
+                  return this.wrapTable(<Td>
                     <ConditionalWrap
                       condition={item.useExpand} wrap={children => <div className="js-expand js-acms-expand">
                         <div className="js-acms-expand-inner">
@@ -408,9 +455,9 @@ export default class UnitGroupSourceModan extends Component {
                         <input type="hidden" name={`${item.name}{id}:extension`} value="rich-editor" />
                       </div>
                     </ConditionalWrap>
-                  </li>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'table') {
-                  return this.wrapTable(<li>
+                  return this.wrapTable(<Td>
                     <div className="js-editable-table-field">
                       <div className="js-editable-table">
                         {`<!-- BEGIN_IF [{${item.name}}[delnl]/nem] -->\n`}
@@ -430,23 +477,23 @@ export default class UnitGroupSourceModan extends Component {
                         <input type="hidden" className="js-editable-table-dest" value="" name={`${item.name}{id}[]`} />
                       </div>
                     </div>
-                  </li>, item.title);
+                  </Td>, item.title);
                 }
               })}
             </ConditionalWrap>
-            <td className="acms-admin-table-nowrap">
+            <Td className="acms-admin-table-nowrap">
               <input type="button" className={classnames('item-delete', { 'acms-admin-btn-admin acms-admin-btn-admin-danger': acmscss })} value="削除" />
-            </td>
-          </li>}
+            </Td>
+          </Tr>}
         </tbody>
         <tfoot>
-          <li>
-            <div colSpan={groupLength + 2}>
+          <Tr>
+            <Td colSpan={groupLength + 2}>
               <input type="button" className={classnames('item-insert', { 'acms-admin-btn-admin': acmscss })} value="追加" />
-            </div>
-          </li>
+            </Td>
+          </Tr>
         </tfoot>
-      </ul>}
+      </Table>}
       {unitGroupName && <Fragment>
         {unitgroupitems.map(item => (<Fragment>
           {item.type === 'image' && <Fragment>
@@ -500,6 +547,6 @@ export default class UnitGroupSourceModan extends Component {
   }
 }
 
-UnitGroupSourceModan.defaultProps = {
+UnitGroupSource.defaultProps = {
   preview: false
 };

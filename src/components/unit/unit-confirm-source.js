@@ -1,67 +1,90 @@
 import React, { Component, Fragment } from 'react';
 import classnames from 'classnames';
 
-const ConditionalWrap = ({ condition, wrap, children }) => (condition ? wrap(children) : children);
-
-export default class FieldConfirmSourceModan extends Component {
+export default class UnitConfirmSource extends Component {
   constructor(props) {
     super(props);
   }
 
   render() {
-    const { customfield, acmscss } = this.props;
+    const { customunit, acmscss , value} = this.props;
+    let Table = "table";
+    let Th = "th";
+    let Tr = "tr";
+    let Td = "td";
 
-    return (<ul className={classnames({ 'acms-admin-table-admin-edit': acmscss })}>
-      {customfield.map((item, index) => {
+    switch(value){
+      case "classic":
+        Table = "table";
+        Th = "th"
+        Tr = "tr";
+        Td = "td";
+        break;
+      case "modan":
+        Table = "ul";
+        Th = "div"
+        Tr = "li";
+        Td = "div";
+        break;
+      case "color":
+        Table = "ul";
+        Th = "div"
+        Tr = "li";
+        Td = "div";
+        break;
+    }
+
+    return (<Table className={classnames({ 'acms-admin-table-admin-edit acms-admin-table-admin-edit-bordered': acmscss })}>
+      {customunit.map((item) => {
         if (!item.name) {
           return null;
         }
         if (item.type === 'text') {
-          return (<li key={index}>
-            <label>{item.title}</label>
-            <div>
+          return (<Tr>
+            <Th>{item.title}</Th>
+            <Td>
               {`{${item.name}}`}
-            </div>
-          </li>);
+            </Td>
+          </Tr>);
         } else if (item.type === 'textarea') {
-          return (<li key={index}>
-            <label>{item.title}</label>
-            <div>
+          return (<Tr>
+            <Th>{item.title}</Th>
+            <Td>
               {`{${item.name}}[escape|nl2br]`}
-            </div>
-          </li>);
+            </Td>
+          </Tr>);
         } else if (item.type === 'select') {
-          return (<li key={index}>
-            <label>{item.title}</label>
-            <div>
+          return (<Tr>
+            <Th>{item.title}</Th>
+            <Td>
               {item.option.map(option => (<div>
                 {`<!-- BEGIN_IF [{${item.name}}/eq/${option.value}] -->`}
                 {option.label}
                 {'<!-- END_IF -->'}
               </div>))}
-            </div>
-          </li>);
+            </Td>
+          </Tr>);
         } else if (item.type === 'radio') {
-          return (<li key={index}>
-            <label>{item.title}</label>
-            <div>
+          return (<Tr>
+            <Th>{item.title}</Th>
+            <Td>
               {item.option.map(option => (`<!-- BEGIN_IF [{${item.name}}/eq/${option.value}] -->
               ${option.label}
               <!-- END_IF -->`))}
-            </div>
-          </li>);
+            </Td>
+          </Tr>);
         } else if (item.type === 'checkbox') {
-          return (<li key={index}>
-            <label>{item.title}</label>
-            <div>
+          return (<Tr>
+            <Th>{item.title}</Th>
+            <Td>
               {`<!-- BEGIN ${item.name}:loop -->`}
               {`<!-- BEGIN ${item.name}:glue -->,<!-- END ${item.name}:glue -->`}
               {item.option.map(option => `<!-- BEGIN_IF [{${item.name}}/eq/${option.value}] -->
               ${option.value}
               <!-- END_IF -->`)}
               {`<!-- END ${item.name}:loop -->`}
-            </div>
-          </li>);
+            </Td>
+          </Tr>);
         } else if (item.type === 'file') {
           let src = '/images/fileicon/';
           let alt = 'file';
@@ -71,29 +94,28 @@ export default class FieldConfirmSourceModan extends Component {
           } else {
             src += 'file.svg';
           }
-
-          return (<li key={index}>
-            <label>{item.title}</label>
-            <div>
+          return (<Tr>
+            <Th>{item.title}</Th>
+            <Td>
               {`<!-- BEGIN ${item.name}@path:veil -->`}
               <a href={`%{ARCHIVES_DIR}{${item.name}@path}`}>
                 <img src={src} width="64" height="64" alt={alt} />
               </a>
               {`<!-- END ${item.name}@path:veil -->`}
-            </div>
-          </li>);
+            </Td>
+          </Tr>);
         } else if (item.type === 'image') {
-          return (<li key={index}>
-            <label>{item.title}</label>
-            <div>
+          return (<Tr>
+            <Th>{item.title}</Th>
+            <Td>
               <img src={`%{ARCHIVES_DIR}{${item.name}@path}`} width="64" height="64" alt={`{${item.name}@alt}`} />
-            </div>
-          </li>);
+            </Td>
+          </Tr>);
         } else if (item.type === 'media') {
-          return (<li key={index}>
-            <label>{item.title}</label>
-            <div>
-                {`<!-- BEGIN_IF [{${item.name}@type}/eq/file] -->`}
+          return (<Tr>
+            <Th>{item.title}</Th>
+            <Td>
+              {`<!-- BEGIN_IF [{${item.name}@type}/eq/file] -->`}
                 <a href={`{${item.name}@path}`}>
                   <img
                     alt={`{${item.name}@alt}`}
@@ -122,31 +144,31 @@ export default class FieldConfirmSourceModan extends Component {
               <p>{`{${item.name}@text}`}</p>
               {'<!-- END_IF -->'}
               {'<!-- END_IF -->'}
-            </div>
-          </li>);
+            </Td>
+          </Tr>);
         } else if (item.type === 'rich-editor') {
-          return (<li key={index}>
-            <label>{item.title}</label>
-            <div>
+          return (<Tr>
+            <Th>{item.title}</Th>
+            <Td>
               {`{${item.name}@html}[raw]`}
-            </div>
-          </li>)
+            </Td>
+          </Tr>)
         } else if (item.type === 'lite-editor') {
-          return (<li key={index}>
-            <label>{item.title}</label>
-            <div>
+          return (<Tr>
+            <Th>{item.title}</Th>
+            <Td>
               {`{${item.name}}[raw]`}
-            </div>
-          </li>)
+            </Td>
+          </Tr>)
         } else if (item.type === 'table') {
-          return (<li key={index}>
-            <label>{item.title}</label>
-            <div>
+          return (<Tr>
+            <Th>{item.title}</Th>
+            <Td>
               {`{${item.name}}[raw]`}
-            </div>
-          </li>)
+            </Td>
+          </Tr>)
         }
       })}
-    </ul>);
+    </Table>);
   }
 }

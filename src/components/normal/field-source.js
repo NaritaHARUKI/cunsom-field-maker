@@ -3,7 +3,7 @@ import classnames from 'classnames';
 
 const ConditionalWrap = ({ condition, wrap, children }) => (condition ? wrap(children) : children);
 
-export default class FieldSourceModan extends Component {
+export default class FieldSource extends Component {
   constructor(props) {
     super(props);
   }
@@ -36,9 +36,7 @@ export default class FieldSourceModan extends Component {
             <input type="hidden" name={`${name}:v#${validator.option}`} value={validator.value} id={`${name}-v-${validator.option}`} />
             {!jsValidator && <Fragment>
               {validator.message && <Fragment>
-                {preview ? null : `<!-- BEGIN ${name}:validator#${validator.option} -->`}
                 <p className={classnames({ 'acms-admin-text-error': acmscss })}>{validator.message}</p>
-                {preview ? null : `<!-- END ${name}:validator#${validator.option} -->`}
               </Fragment>}
             </Fragment>}
             {jsValidator &&
@@ -64,10 +62,24 @@ export default class FieldSourceModan extends Component {
     );
   }
 
-  renderLavel(item) {
-    const { jsValidator } = this.props;
+  renderTh(item) {
+    const { jsValidator , value} = this.props;
+    let Th = "th";
+
+    switch(value){
+      case "classic":
+        Th = "th";
+        break;
+      case "modan":
+        Th = "lavel";
+        break;
+      case "color":
+        Th = "lavel";
+        break;
+    }
+
     return (
-      <label className="fontLavel">
+      <Th>
         {item.title}
         {item.tooltip &&
           <i className="acms-admin-icon-tooltip js-acms-tooltip" data-acms-tooltip={item.tooltip} />
@@ -77,63 +89,80 @@ export default class FieldSourceModan extends Component {
             <span className="acms-admin-icon acms-admin-icon-checklist" />
           </label>
         }
-      </label>
+      </Th>
     );
   }
 
   render() {
-    const { acmscss, customfield, preview, jsValidator } = this.props;
+    const { acmscss, customfield, jsValidator , value} = this.props;
+    let Element = "table";
+    let Tr = "tr";
+    let Td = "td"
+     
+    switch(value){
+      case "classic":
+        Element = "table";
+        Tr = "tr";
+        Td = "div";
+        break;
+      case "modan":
+        Element = "ul";
+        Tr = "li"
+        Td = "div";
+        break;
+      case "color":
+        Element = "ul";
+        Tr = "li";
+        Td = "div";
+        break;
+    }
+
+
+
     return (
       <Fragment>
         {jsValidator && '<!-- <form action="" method="post" class="js-validator" enctype="multipart/form-data"> -->'}
-        <ul className={classnames({ 'acms-admin-table-admin-edit': acmscss })} ref={(table => this.table = table)} >
+        <Element className={classnames({ 'acms-admin-table-admin-edit': acmscss })} ref={(table => this.table = table)}>
           {customfield.map((item, index) => {
             if (item.type === 'text') {
-              return (<li key={index} className="modanList">
-                  <div>
-                    {this.renderLavel(item, acmscss, jsValidator)}
-                  </div>
-                  <div>
-                    <input type="text" name={item.name} value={`{${item.name}}`} className={classnames({ 'acms-admin-form-width-full': acmscss })} {...(jsValidator ? { 'data-validator': item.name } : {})} />
-                    <input type="hidden" name="field[]" value={item.name} />
-                    {this.renderValidator(item, acmscss)}
-                    {this.renderNoSearch(item)}
-                  </div>
-
-              </li>);
+              return (<Tr key={index}  className={((value==="color") ? "colorList" : "")}>
+                {this.renderTh(item, acmscss, jsValidator)}
+                <Td>
+                  <input type="text" name={item.name} value={`{${item.name}}`} className={classnames({ 'acms-admin-form-width-full': acmscss })} {...(jsValidator ? { 'data-validator': item.name } : {})} />
+                  <input type="hidden" name="field[]" value={item.name} />
+                  {this.renderValidator(item, acmscss)}
+                  {this.renderNoSearch(item)}
+                </Td>
+              </Tr>);
             } else if (item.type === 'textarea') {
               return (
-                <div key={index}>
-                  <div>
-                    {this.renderLavel(item, acmscss)}
-                  </div>
-                
-                  <div>
-                     <textarea name={item.name} className={classnames({ 'acms-admin-form-width-full': acmscss })} {...(jsValidator ? { 'data-validator': item.name } : {})}>{`{${item.name}}`}</textarea>
-                     <input type="hidden" name="field[]" value={item.name} />
-                     {this.renderValidator(item, acmscss)}
-                     {this.renderNoSearch(item, acmscss)}
-                  </div>
-                </div>
-                
+                <Tr key={index} className={((value==="color") ? "colorList" : "")}>
+                  {this.renderTh(item, acmscss)}
+                  <Td>
+                    <textarea name={item.name} className={classnames({ 'acms-admin-form-width-full': acmscss })} {...(jsValidator ? { 'data-validator': item.name } : {})}>{`{${item.name}}`}</textarea>
+                    <input type="hidden" name="field[]" value={item.name} />
+                    {this.renderValidator(item, acmscss)}
+                    {this.renderNoSearch(item, acmscss)}
+                  </Td>
+                </Tr>
               );
             } else if (item.type === 'lite-editor') {
               return (
-                <div key={index}>
-                  {this.renderLavel(item, acmscss)}
-                  <div>
+                <Tr key={index} className={((value==="color") ? "colorList" : "")}>
+                  {this.renderTh(item, acmscss)}
+                  <Td>
                     <textarea name={item.name} className={classnames('js-lite-editor-field', { 'acms-admin-form-width-full': acmscss })} {...(jsValidator ? { 'data-validator': item.name } : {})}>{`{${item.name}}`}</textarea>
                     <input type="hidden" name="field[]" value={item.name} />
                     {this.renderValidator(item, acmscss)}
                     {this.renderNoSearch(item, acmscss)}
-                  </div>
-                </div>
+                  </Td>
+                </Tr>
               );
             } else if (item.type === 'rich-editor') {
               return (
-                <div key={index}>
-                  {this.renderLavel(item, acmscss)}
-                  <div>
+                <Tr key={index} className={((value==="color") ? "colorList" : "")}>
+                  {this.renderTh(item, acmscss)}
+                  <Td>
                     <ConditionalWrap
                       condition={item.useExpand} wrap={children => <div className="js-expand js-acms-expand">
                         <div className="js-acms-expand-inner">
@@ -151,42 +180,42 @@ export default class FieldSourceModan extends Component {
                         <input type="hidden" name={`${item.name}:extension`} value="rich-editor" />
                       </div>
                     </ConditionalWrap>
-                  </div>
-                </div>
+                  </Td>
+                </Tr>
               );
             } else if (item.type === 'table') {
               return (
-                <div key={index}>
-                  {this.renderLavel(item, acmscss)}
-                  <div>
+                <Tr key={index} className={((value==="color") ? "colorList" : "")}>
+                  {this.renderTh(item, acmscss)}
+                  <Td>
                     <div className="js-editable-table-field">
                       <div className="js-editable-table">
                         {preview ? null : `<!-- BEGIN_IF [{${item.name}}[delnl]/nem] -->\n`}
                         {preview ? null : `{${item.name}}[raw]`}
                         {preview ? null : '<!-- ELSE -->'}
                         <table>
-                          <th>
+                          <tr>
+                            <th>サンプル</th>
+                            <th>サンプル</th>
+                          </tr>
+                          <tr>
                             <td>サンプル</td>
                             <td>サンプル</td>
-                          </th>
-                          <th>
-                            <td>サンプル</td>
-                            <td>サンプル</td>
-                          </th>
+                          </tr>
                         </table>
                         {preview ? null : '<!-- END_IF -->'}
                         <input type="hidden" className="js-editable-table-dest" value={`{${item.name}}`} name={item.name} />
                         <input type="hidden" name="field[]" value={item.name} />
                       </div>
                     </div>
-                  </div>
-                </div>
+                  </Td>
+                </Tr>
               );
             } else if (item.type === 'select') {
               return (
-                <div key={index}>
-                  {this.renderLavel(item, acmscss)}
-                  <div>
+                <Tr key={index} className={((value==="color") ? "colorList" : "")}>
+                  {this.renderTh(item, acmscss)}
+                  <Td>
                     <select name={item.name} className={classnames({ 'acms-admin-form-width-full': acmscss })}>
                       <option value="" />
                       {item.option.map((option) => {
@@ -199,14 +228,14 @@ export default class FieldSourceModan extends Component {
                     <input type="hidden" name="field[]" value={item.name} />
                     {this.renderValidator(item, acmscss)}
                     {this.renderNoSearch(item, acmscss)}
-                  </div>
-                </div>
+                  </Td>
+                </Tr>
               );
             } else if (item.type === 'radio') {
               return (
-                <div key={index}>
-                  {this.renderLavel(item)}
-                  <div>
+                <Tr key={index} className={((value==="color") ? "colorList" : "")}>
+                  {this.renderTh(item)}
+                  <Td>
                     {item.option.map((option) => {
                       if (!option.label) {
                         return null;
@@ -224,14 +253,14 @@ export default class FieldSourceModan extends Component {
                     <input type="hidden" name="field[]" value={item.name} />
                     {this.renderValidator(item, acmscss)}
                     {this.renderNoSearch(item, acmscss)}
-                  </div>
-                </div>
+                  </Td>
+                </Tr>
               );
             } else if (item.type === 'checkbox') {
               return (
-                <div key={index}>
-                  {this.renderLavel(item)}
-                  <div>
+                <Tr key={index} className={((value==="color") ? "colorList" : "")}>
+                  {this.renderTh(item)}
+                  <Td>
                     {item.option.map((option) => {
                       if (!option.label) {
                         return null;
@@ -249,13 +278,13 @@ export default class FieldSourceModan extends Component {
                     <input type="hidden" name="field[]" value={item.name} />
                     {this.renderValidator(item, acmscss)}
                     {this.renderNoSearch(item, acmscss)}
-                  </div>
-                </div>
+                  </Td>
+                </Tr>
               );
             } else if (item.type === 'image') {
-              return (<div key={index}>
-                {this.renderLavel(item)}
-                <div className={classnames({ 'js-img_resize_cf': item.resize })}>
+              return (<Tr key={index} className={((value==="color") ? "colorList" : "")}>
+                {this.renderTh(item)}
+                <Td className={classnames({ 'js-img_resize_cf': item.resize })}>
                   {preview ? null : `<!-- BEGIN_IF [{${item.name}@path}/nem] -->`}
                   <Fragment>
                     <img src={`%{ARCHIVES_DIR}{${item.name}@path}`} className={classnames({ 'acms-admin-img-responsive': acmscss, 'js-img_resize_preview': item.resize })} style={item.normalSize ? { width: `${item.normalSize}px` } : null} alt={`{${item.name}@alt}`} />
@@ -286,12 +315,12 @@ export default class FieldSourceModan extends Component {
                   <input type="hidden" name={`${item.name}@filename`} value="" />
                   {this.renderValidator(item, acmscss)}
                   {this.renderNoSearch(item, acmscss)}
-                </div>
-              </div>);
+                </Td>
+              </Tr>);
             } else if (item.type === 'media') {
-              return (<div key={index}>
-                {this.renderLavel(item)}
-                <div className="js-media-field">
+              return (<Tr key={index} className={((value==="color") ? "colorList" : "")}>
+                {this.renderTh(item)}
+                <Td className="js-media-field">
                   {!item.useDropArea && <Fragment>
                     <div>
                       { `<!-- BEGIN_IF [{${item.name}@thumbnail}/nem] -->`}
@@ -343,8 +372,8 @@ export default class FieldSourceModan extends Component {
                   <input type="hidden" name={item.name} value={preview ? '' : `{${item.name}}`} className="js-value" />
                   <input type="hidden" name="field[]" value={item.name} />
                   <input type="hidden" name={`${item.name}:extension`} value="media" />
-                </div>
-              </div>);
+                </Td>
+              </Tr>);
             } else if (item.type === 'file') {
               let src = '/images/fileicon/';
               let alt = 'file';
@@ -355,9 +384,9 @@ export default class FieldSourceModan extends Component {
                 src += 'file.svg';
               }
 
-              return (<div key={index}>
-                {this.renderLavel(item, acmscss)}
-                <div>
+              return (<Tr key={index} className={((value==="color") ? "colorList" : "")}>
+                {this.renderTh(item, acmscss)}
+                <Td>
                   {preview ? null : `<!-- BEGIN ${item.name}@path:veil -->`}
                   <input type="hidden" name={`${item.name}@old`} value={`{${item.name}@path}`} />
                   <input type="hidden" name={`${item.name}@secret`} value={`{${item.name}@secret}`} />
@@ -379,17 +408,17 @@ export default class FieldSourceModan extends Component {
                   {item.fileNameMethod === 'asis' && <input type="hidden" name={`${item.name}@filename`} value="@rawfilename" />}
                   {this.renderValidator(item, acmscss)}
                   {this.renderNoSearch(item, acmscss)}
-                </div>
-              </div>);
+                </Td>
+              </Tr>);
             }
           })}
-        </ul>
+        </Element>
         {jsValidator && '<!-- </form> -->'}
       </Fragment>
     );
   }
 }
 
-FieldSourceModan.defaultProps = {
+FieldSource.defaultProps = {
   preview: false
 };

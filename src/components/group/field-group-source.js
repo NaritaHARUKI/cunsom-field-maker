@@ -3,7 +3,7 @@ import classnames from 'classnames';
 
 const ConditionalWrap = ({ condition, wrap, children }) => condition ? wrap(children) : children;
 
-export default class FieldGroupSourceColor extends Component {
+export default class FieldGroupSource extends Component {
 
   constructor(props) {
     super(props);
@@ -18,7 +18,21 @@ export default class FieldGroupSourceColor extends Component {
   }
 
   renderValidator(item, acmscss, bottom = false) {
-    const { preview, jsValidator } = this.props;
+    const { jsValidator , value} = this.props;
+
+    let P = "p";
+
+    switch(value){
+      case "classic":
+        P = "p";
+        break;
+      case "modan":
+        P = "span";
+        break;
+      case "color":
+        P = "span";
+        break;
+    }
 
     if (!item.openValidator) {
       return null;
@@ -32,9 +46,7 @@ export default class FieldGroupSourceColor extends Component {
         return (<Fragment>
           {(!jsValidator && !bottom) && <Fragment>
             {validator.message && <Fragment>
-              {preview ? null : `<!-- BEGIN ${name}:validator#${validator.option} -->`}
-              <p className={classnames({ 'acms-admin-text-error': acmscss })}>{validator.message}</p>
-              {preview ? null : `<!-- END ${name}:validator#${validator.option} -->`}
+              <P className={classnames({ 'acms-admin-text-error': acmscss })}>{validator.message}</P>
             </Fragment>}
           </Fragment>}
           {jsValidator &&
@@ -50,62 +62,108 @@ export default class FieldGroupSourceColor extends Component {
   }
 
   wrapTable(children, title) {
-    const { direction } = this.props;
+    const { direction , value} = this.props;
+    let TR = "tr";
+    let TH = "th";
+    switch(value){
+      case "classic":
+        TR = "tr";
+        TH = "th"
+        break;
+      case "modan":
+        TR = "li";
+        TH = "label";
+        break;
+      case "color":
+        TR = "li";
+        TH = "label";
+        break;
+
+    }
     return (<ConditionalWrap
       condition={direction === 'vertical'}
-      wrap={child => <li className='colorList'>
-        <label>{title}</label>
+      wrap={child => <Tr className={((value==="color") ? "colorList" : "")}>
+        <Th>{title}</Th>
         {child}
-      </li>}
+      </Tr>}
     >{children}</ConditionalWrap>);
   }
 
 
   render() {
-    const { groupName, groupTitle, acmscss, groupitems, preview, direction } = this.props;
+    const { groupName, groupTitle, acmscss, groupitems, preview, direction , value } = this.props;
     const groupLength = groupitems.length;
+
+    let Table = "table";
+    let Tr = "tr";
+    let Th = "th";
+    let Td = "td";
+
+    console.log(value+" group")
+
+    switch(value){
+      case "classic":
+        console.log("ccc")
+        Table = "table";
+        Tr = "tr";
+        Th = "th";
+        Td = "td";
+        break;
+      case "modan":
+        console.log("mmm")
+        Table = "ul";
+        Tr = "li";
+        Th = "p";
+        Td = "div";
+        break;
+      case "color":
+        Table = "ul";
+        Tr = "li";
+        Th = "p";
+        Td = "div";
+        break;
+    }
 
     return (<Fragment>
       {groupTitle && <h2 className={classnames({ 'acms-admin-admin-title2': acmscss })}>{groupTitle}</h2>}
-      {groupName && <ul className={classnames('js-fieldgroup-sortable', { 'adminTable acms-admin-table-admin-edit': acmscss })} ref={table => this.table = table}>
+      {groupName && <Table className={classnames('js-fieldgroup-sortable', { 'adminTable acms-admin-table-admin-edit': acmscss })} ref={table => this.table = table}>
         <thead className={classnames({ 'acms-admin-hide-sp': acmscss })}>
-          <li className='colorList'>
-            <p className={classnames({ 'acms-admin-table-left acms-admin-admin-config-table-item-handle': acmscss })}>&nbsp;</p>
+          <Tr className={((value==="color") ? "colorList" : "")}>
+            <Th className={classnames({ 'acms-admin-table-left acms-admin-admin-config-table-item-handle': acmscss })}>&nbsp;</Th>
             {direction === 'horizontal' &&
               <Fragment>
-                {groupitems.map(item => (<p className={classnames({ 'acms-admin-table-left': acmscss })}>
+                {groupitems.map(item => (<Th className={classnames({ 'acms-admin-table-left': acmscss })}>
                   {item.title}
                   {item.tooltip && <i className="acms-admin-icon-tooltip js-acms-tooltip" data-acms-tooltip={item.tooltip} />}
-                </p>))}
+                </Th>))}
               </Fragment>
             }
-            {direction === 'vertical' && <th />}
-            <p className={classnames({ 'acms-admin-table-left acms-admin-admin-config-table-action': acmscss })}>削除</p>
-          </li>
+            {direction === 'vertical' && <Th />}
+            <Th className={classnames({ 'acms-admin-table-left acms-admin-admin-config-table-action': acmscss })}>削除</Th>
+          </Tr>
         </thead>
         <tbody>
-          {preview ? null : `<!-- BEGIN ${groupName}:loop -->`}
-          <li className="sortable-item colorList">
-            <p className="item-handle acms-admin-table-nowrap">
+          <Tr className={((value==="color") ? "colorList sortable-item" : "sortable-item")} >
+            <Td className="item-handle acms-admin-table-nowrap">
               {acmscss && <i className="acms-admin-icon-sort" />}
-            </p>
+            </Td>
             <ConditionalWrap
               condition={direction === 'vertical'}
-              wrap={children => <div><table>{children}</table></div>}
+              wrap={children => <td><table>{children}</table></td>}
             >
               {groupitems.map((item) => {
                 if (item.type === 'text') {
-                  return this.wrapTable(<div>
+                  return this.wrapTable(<Td>
                     <input type="text" name={`${item.name}[]`} value={`{${item.name}}`} className={classnames({ 'acms-admin-form-width-full': acmscss })} />
                     {this.renderValidator(item, acmscss, false)}
-                  </div>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'textarea') {
-                  return this.wrapTable(<div>
+                  return this.wrapTable(<Td>
                     <textarea name={`${item.name}[]`} className={classnames({ 'acms-admin-form-width-full': acmscss })}>{`{${item.name}}`}</textarea>
                     {this.renderValidator(item, acmscss, false)}
-                  </div>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'select') {
-                  return this.wrapTable(<div>
+                  return this.wrapTable(<Td>
                     <select name={`${item.name}[]`} className={classnames({ 'acms-admin-form-width-full': acmscss })}>
                       <option value="" />
                       {item.option.map((option) => {
@@ -116,9 +174,9 @@ export default class FieldGroupSourceColor extends Component {
                       })}
                     </select>
                     {this.renderValidator(item, acmscss, false)}
-                  </div>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'radio') {
-                  return this.wrapTable(<div>
+                  return this.wrapTable(<Td>
                     {item.option.map((option) => {
                       if (!option.label) {
                         return null;
@@ -132,7 +190,7 @@ export default class FieldGroupSourceColor extends Component {
                       </div>);
                     })}
                     {this.renderValidator(item, acmscss, false)}
-                  </div>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'file') {
                   let src = '/images/fileicon/';
                   let alt = 'file';
@@ -143,8 +201,7 @@ export default class FieldGroupSourceColor extends Component {
                     src += 'file.svg';
                   }
 
-                  return this.wrapTable(<div>
-                    {preview ? null : `<!-- BEGIN_IF [{${item.name}@path}/nem] -->`}
+                  return this.wrapTable(<Td>
                     <div className={classnames({ 'acms-admin-form-checkbox': acmscss })}>
                       <input type="checkbox" name={`${item.name}@edit[]`} value="delete" id={`input-checkbox-${item.name}{i}@edit[]`} />
                       <label htmlFor={`input-checkbox-${item.name}{i}@edit[]`}>
@@ -153,7 +210,6 @@ export default class FieldGroupSourceColor extends Component {
                     <a href={`%{ARCHIVES_DIR}{${item.name}@path}`}>
                       <img src={src} width="64" height="64" alt={alt} />
                     </a>
-                    {preview ? null : '<!-- END_IF -->'}
                     <input type="hidden" name={`${item.name}@old[]`} value={`{${item.name}@path}`} />
                     {item.extension && <input type="hidden" name={`${item.name}@extension[]`} value={item.extension} />}
                     {item.fileNameMethod === 'random' && item.fileName && <input type="hidden" name={`${item.name}@filename[]`} value="" />}
@@ -161,7 +217,7 @@ export default class FieldGroupSourceColor extends Component {
                     {item.fileNameMethod === 'asis' && <input type="hidden" name={`${item.name}@filename[]`} value="@rawfilename" />}
                     <input type="file" name={`${item.name}[]`} />
                     {this.renderValidator(item, acmscss, false)}
-                  </div>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'image') {
                   const style = {};
                   if (item.normalSize) {
@@ -169,8 +225,7 @@ export default class FieldGroupSourceColor extends Component {
                   }
                   const hiddenStyle = Object.assign({}, style, { display: 'none' });
 
-                  return this.wrapTable(<div className={classnames({ 'js-img_resize_cf': item.resize })}>
-                    {preview ? null : `<!-- BEGIN_IF [{${item.name}@path}/nem] -->`}
+                  return this.wrapTable(<Td className={classnames({ 'js-img_resize_cf': item.resize })}>
                     <img
                       src={`%{ARCHIVES_DIR}{${item.name}@path}`}
                       className={classnames({ 'js-img_resize_preview': item.resize })} style={style} alt={`{${item.name}@alt}`}
@@ -181,12 +236,10 @@ export default class FieldGroupSourceColor extends Component {
                       {acmscss && <i className="acms-admin-ico-checkbox" />}
                       削除
                     </label>
-                    {preview ? null : '<!-- ELSE -->'}
                     <img
                       src={`%{ARCHIVES_DIR}{${item.name}@path}`}
                       className={classnames({ 'js-img_resize_preview': item.resize })} style={hiddenStyle}
                     />
-                    {preview ? null : '<!-- END_IF -->'}
                     <input type="file" name={`${item.name}[]`} className={classnames({ 'js-img_resize_input': item.resize })} /><br />
                     {item.alt && <Fragment>代替テキスト:<input type="text" name={`${item.name}@alt[]`} value={`{${item.name}@alt}`} size="40" /></Fragment>}
                     {item.normalSize && <input type="hidden" name={`${item.name}@${item.normal}[]`} value={item.normalSize} />}
@@ -194,12 +247,11 @@ export default class FieldGroupSourceColor extends Component {
                     {item.largeSize && <input type="hidden" name={`${item.name}@${item.large}[]`} value={item.largeSize} />}
                     {item.square && <input type="hidden" name={`${item.name}@${item.square}[]`} value={item.squareSize} />}
                     {this.renderValidator(item, acmscss, false)}
-                  </div>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'media') {
-                  return this.wrapTable(<div className="js-media-field">
+                  return this.wrapTable(<Td className="js-media-field">
                     {!item.useDropArea && <Fragment>
                       <div>
-                        {`<!-- BEGIN_IF [{${item.name}@thumbnail}/nem] -->`}
                         <ConditionalWrap
                           condition={item.mediaType === 'file'}
                           wrap={children => <a href={`%{MEDIA_ARCHIVES_DIR}{${item.name}@path}`}>{children}</a>}
@@ -214,7 +266,6 @@ export default class FieldGroupSourceColor extends Component {
                             } })}
                           />
                         </ConditionalWrap>
-                        {'<!-- ELSE -->'}
                         <img
                           src=""
                           {...(item.mediaType === 'file' ?
@@ -226,7 +277,6 @@ export default class FieldGroupSourceColor extends Component {
                         { style: { display: 'none' } })}
                           className={classnames('js-preview', { 'acms-admin-img-responsive': acmscss })}
                         />
-                        {'<!-- END_IF -->'}
                         <p className="js-text acms-admin-text-danger" style={{ display: 'none' }}>許可されていないファイルのため挿入できません。</p>
                       </div>
                       <div className={classnames({ 'acms-admin-margin-top-mini': acmscss })}>
@@ -245,14 +295,14 @@ export default class FieldGroupSourceColor extends Component {
                     </Fragment>}
                     <input type="hidden" name={`${item.name}[]`} value={preview ? '' : `{${item.name}}`} className="js-value" />
                     {this.renderValidator(item, acmscss, false)}
-                  </div>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'lite-editor') {
-                  return this.wrapTable(<div>
+                  return this.wrapTable(<Td>
                     <textarea name={`${item.name}[]`} className={classnames('js-lite-editor-field', { 'acms-admin-form-width-full': acmscss })}>{`{${item.name}}`}</textarea>
                     {this.renderValidator(item, acmscss, false)}
-                  </div>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'rich-editor') {
-                  return this.wrapTable(<div>
+                  return this.wrapTable(<Td>
                     <ConditionalWrap
                       condition={item.useExpand} wrap={children => <div className="js-expand js-acms-expand">
                         <div className="js-acms-expand-inner">
@@ -269,14 +319,11 @@ export default class FieldGroupSourceColor extends Component {
                         <input type="hidden" name={`${item.name}:extension`} value="rich-editor" />
                       </div>
                     </ConditionalWrap>
-                  </div>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'table') {
-                  return this.wrapTable(<div>
+                  return this.wrapTable(<Td>
                     <div className="js-editable-table-field">
                       <div className="js-editable-table">
-                        {preview ? null : `<!-- BEGIN_IF [{${item.name}}[delnl]/nem] -->\n`}
-                        {preview ? null : `{${item.name}}[raw]`}
-                        {preview ? null : '<!-- ELSE -->'}
                         <table>
                           <tr>
                             <th>サンプル</th>
@@ -287,46 +334,44 @@ export default class FieldGroupSourceColor extends Component {
                             <td>サンプル</td>
                           </tr>
                         </table>
-                        {preview ? null : '<!-- END_IF -->'}
                         <input type="hidden" className="js-editable-table-dest" value={`{${item.name}}`} name={`${item.name}[]`} />
                       </div>
                     </div>
-                  </div>, item.title);
+                  </Td>, item.title);
                 }
               })}
             </ConditionalWrap>
-            <div className="acms-admin-table-nowrap">
+            <Td className="acms-admin-table-nowrap">
               <input type="button" className={classnames('item-delete', { 'acms-admin-btn-admin acms-admin-btn-admin-danger': acmscss })} value="削除" />
-            </div>
-          </li>
-          {preview ? null : `<!-- END ${groupName}:loop -->`}
-          {preview ? null : <li className="sortable-item item-template colorList">
-            <div className="item-handle acms-admin-table-nowrap">{acmscss && <i className="acms-admin-icon-sort" />}</div>
+            </Td>
+          </Tr>
+          {preview ? null : <Tr className="sortable-item item-template">
+            <Td className="item-handle acms-admin-table-nowrap">{acmscss && <i className="acms-admin-icon-sort" />}</Td>
             <ConditionalWrap
               condition={direction === 'vertical'}
-              wrap={children => <div><ul>{children}</ul></div>}
+              wrap={children => <Td><Table>{children}</Table></Td>}
             >
               {groupitems.map((item) => {
                 if (item.type === 'text') {
-                  return this.wrapTable(<div>
+                  return this.wrapTable(<Td>
                     <input type="text" name={`${item.name}[]`} value="" className={classnames({ 'acms-admin-form-width-full': acmscss })} />
                     {this.renderValidator(item, acmscss, true)}
-                  </div>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'textarea') {
-                  return this.wrapTable(<div>
+                  return this.wrapTable(<Td>
                     <textarea name={`${item.name}[]`} className={classnames({ 'acms-admin-form-width-full': acmscss })} />
                     {this.renderValidator(item, acmscss, true)}
-                  </div>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'select') {
-                  return this.wrapTable(<div>
+                  return this.wrapTable(<Td>
                     <select name={`${item.name}[]`} className={classnames({ 'acms-admin-form-width-full': acmscss })}>
                       <option value="" />
                       {item.option.map(option => (<option value={option.value}>{option.label}</option>))}
                     </select>
                     {this.renderValidator(item, acmscss, true)}
-                  </div>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'radio') {
-                  return this.wrapTable(<div>
+                  return this.wrapTable(<Td>
                     {item.option.map(option => (
                       <div className={classnames({ 'acms-admin-form-radio': acmscss })}>
                         <input type="radio" name={`${item.name}[]`} value={option.value} id={`input-radio-${item.name}-${option.value}`} />
@@ -337,16 +382,16 @@ export default class FieldGroupSourceColor extends Component {
                       </div>
                       ))}
                     {this.renderValidator(item, acmscss, true)}
-                  </div>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'file') {
-                  return this.wrapTable(<div>
+                  return this.wrapTable(<Td>
                     <input type="file" name={`${item.name}[]`} />
                     {item.extension && <input type="hidden" name={`${item.name}@extension[]`} value={item.extension} />}
                     {item.fileNameMethod === 'random' && item.fileName && <input type="hidden" name={`${item.name}@filename[]`} value="" />}
                     {item.fileNameMethod === 'fix' && item.fileName && <input type="hidden" name={`${item.name}@filename[]`} value={item.fileName} />}
                     {item.fileNameMethod === 'asis' && <input type="hidden" name={`${item.name}@filename[]`} value="@rawfilename" />}
                     {this.renderValidator(item, acmscss, true)}
-                  </div>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'image') {
                   const style = {};
                   if (item.normalSize) {
@@ -354,7 +399,7 @@ export default class FieldGroupSourceColor extends Component {
                   }
                   const hiddenStyle = Object.assign({}, style, { display: 'none' });
 
-                  return this.wrapTable(<div className={classnames({ 'js-img_resize_cf': item.resize })}>
+                  return this.wrapTable(<Td className={classnames({ 'js-img_resize_cf': item.resize })}>
                     <img src="" style={hiddenStyle} className="js-img_resize_preview" />
                     <input type="file" name={`${item.name}[]`} style={style} /><br />
                     {item.alt && <Fragment>代替テキスト:<input type="text" name={`${item.name}@alt[]`} value="" size="40" /></Fragment>}
@@ -363,9 +408,9 @@ export default class FieldGroupSourceColor extends Component {
                     {item.large && <input type="hidden" name={`${item.name}@${item.large}[]`} value={item.largeSize} />}
                     {item.square && <input type="hidden" name={`${item.name}@${item.square}[]`} value={item.squareSize} />}
                     {this.renderValidator(item, acmscss, true)}
-                  </div>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'media') {
-                  return this.wrapTable(<div className="js-media-field">
+                  return this.wrapTable(<Td className="js-media-field">
                     {!item.useDropArea && <Fragment>
                       <div>
                         <img
@@ -397,14 +442,14 @@ export default class FieldGroupSourceColor extends Component {
                     </Fragment>}
                     <input type="hidden" name={`${item.name}[]`} value="" className="js-value" />
                     {this.renderValidator(item, acmscss, true)}
-                  </div>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'lite-editor') {
-                  return this.wrapTable(<div>
+                  return this.wrapTable(<Td>
                     <textarea name={`${item.name}[]`} className={classnames('js-lite-editor-field', { 'acms-admin-form-width-full': acmscss })} />
                     {this.renderValidator(item, acmscss, false)}
-                  </div>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'rich-editor') {
-                  return this.wrapTable(<div>
+                  return this.wrapTable(<Td>
                     <ConditionalWrap
                       condition={item.useExpand} wrap={children => <div className="js-expand js-acms-expand">
                         <div className="js-acms-expand-inner">
@@ -420,14 +465,11 @@ export default class FieldGroupSourceColor extends Component {
                         <input className="js-smart-block-body" type="hidden" name={`${item.name}[]`} value="" />
                       </div>
                     </ConditionalWrap>
-                  </div>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'table') {
-                  return this.wrapTable(<div>
+                  return this.wrapTable(<Td>
                     <div className="js-editable-table-field">
                       <div className="js-editable-table">
-                        {`<!-- BEGIN_IF [{${item.name}}[delnl]/nem] -->\n`}
-                        {`{${item.name}}[raw]`}
-                        {'<!-- ELSE -->'}
                         <table>
                           <tr>
                             <th>サンプル</th>
@@ -438,27 +480,26 @@ export default class FieldGroupSourceColor extends Component {
                             <td>サンプル</td>
                           </tr>
                         </table>
-                        {'<!-- END_IF -->'}
                         <input type="hidden" className="js-editable-table-dest" value="" name={`${item.name}[]`} />
                       </div>
                     </div>
-                  </div>, item.title);
+                  </Td>, item.title);
                 }
               })}
             </ConditionalWrap>
-            <div className="acms-admin-table-nowrap">
+            <Td className="acms-admin-table-nowrap">
               <input type="button" className={classnames('item-delete', { 'acms-admin-btn-admin acms-admin-btn-admin-danger': acmscss })} value="削除" />
-            </div>
-          </li>}
+            </Td>
+          </Tr>}
         </tbody>
         <tfoot>
-          <li className='colorList'>
-            <div  colSpan={direction === 'horizontal' ? groupLength + 2 : 3}>
+          <Tr>
+            <Td colSpan={direction === 'horizontal' ? groupLength + 2 : 3}>
               <input type="button" className={classnames('item-insert', { 'acms-admin-btn-admin': acmscss })} value="追加" />
-            </div>
-          </li>
+            </Td>
+          </Tr>
         </tfoot>
-      </ul>}
+      </Table>}
       {groupName && <Fragment>
         {groupitems.map(item => (<Fragment>
           {item.type === 'image' && <Fragment>
@@ -523,6 +564,6 @@ export default class FieldGroupSourceColor extends Component {
   }
 }
 
-FieldGroupSourceColor.defaultProps = {
+FieldGroupSource.defaultProps = {
   preview: false
 };

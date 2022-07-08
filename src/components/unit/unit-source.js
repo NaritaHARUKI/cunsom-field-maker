@@ -3,7 +3,7 @@ import classnames from 'classnames';
 
 const ConditionalWrap = ({ condition, wrap, children }) => (condition ? wrap(children) : children);
 
-export default class UnitSourceColor extends Component {
+export default class UnitSource extends Component {
   constructor(props) {
     super(props);
   }
@@ -52,47 +52,89 @@ export default class UnitSourceColor extends Component {
   }
 
   renderTh(item) {
+
+    const { value } = this.props;
+
+    let Th = "th"
+    
+    switch(value){
+      case "classic":
+        Th = "th";
+        break;
+      case "modan":
+        Th = "div";
+        break;
+      case "color":
+        Th = "div";
+        break;
+    }
+
     return (
-      <label>
+      <Th>
         {item.title}
         {item.tooltip &&
           <i className="acms-admin-icon-tooltip js-acms-tooltip" data-acms-tooltip={item.tooltip} />
         }
-      </label>
+      </Th>
     );
   }
 
   render() {
-    const { acmscss, customunit, preview } = this.props;
+    const { acmscss, customunit, preview, value} = this.props;
+
+    let Table = "table";
+    let Tr = "tr";
+    let Td = "td";
+
+    switch(value){
+      case "classic":
+        Table = "table";
+        Tr = "tr";
+        Td = "td";
+        break;
+      case "modan":
+        Table = "ul";
+        Tr = "li";
+        Td = "div";
+        break;
+      case "color":
+        Table = "ul";
+        Tr = "li";
+        Td = "div";
+        break;
+    }
+
+
+
     return (
-      <ul className={classnames({ 'acms-admin-table-admin-edit': acmscss })} ref={table => this.table = table}>
+      <Table className={classnames({ 'acms-admin-table-admin-edit': acmscss })} ref={table => this.table = table}>
         {customunit.map((item) => {
           if (item.type === 'text') {
-            return (<li className='colorList'>
+            return (<Tr className={((value==="color") ? "colorList" : "")}>
               {this.renderTh(item, acmscss)}
-              <div>
+              <Td>
                 <input type="text" name={`${item.name}{id}`} value={`{${item.name}}`} className={classnames({ 'acms-admin-form-width-full': acmscss })} />
                 <input type="hidden" name="unit{id}[]" value={`${item.name}{id}`} />
                 {this.renderValidator(item, acmscss)}
                 {this.renderNoSearch(item)}
-              </div>
-            </li>);
+              </Td>
+            </Tr>);
           } else if (item.type === 'textarea') {
             return (
-              <li className='colorList'>
+              <Tr className={((value==="color") ? "colorList" : "")}>
                 {this.renderTh(item, acmscss)}
-                <div>
+                <Td>
                   <textarea name={`${item.name}{id}`} className={classnames({ 'acms-admin-form-width-full': acmscss })}>{`{${item.name}}`}</textarea>
                   <input type="hidden" name="unit{id}[]" value={`${item.name}{id}`} />
                   {this.renderValidator(item, acmscss)}
-                </div>
-              </li>
+                </Td>
+              </Tr>
             );
           } else if (item.type === 'select') {
             return (
-              <li className='colorList'>
+              <Tr className={((value==="color") ? "colorList" : "")}>
                 {this.renderTh(item, acmscss)}
-                <div>
+                <Td>
                   <select name={`${item.name}{id}`} className={classnames({ 'acms-admin-form-width-full': acmscss })}>
                     <option value="" />
                     {item.option.map((option) => {
@@ -104,14 +146,14 @@ export default class UnitSourceColor extends Component {
                   </select>
                   <input type="hidden" name="unit{id}[]" value={`${item.name}{id}`} />
                   {this.renderValidator(item, acmscss)}
-                </div>
-              </li>
+                </Td>
+              </Tr>
             );
           } else if (item.type === 'radio') {
             return (
-              <li className='colorList'>
+              <Tr className={((value==="color") ? "colorList" : "")}>
                 {this.renderTh(item)}
-                <div>
+                <Td>
                   {item.option.map((option) => {
                     if (!option.label) {
                       return null;
@@ -128,14 +170,14 @@ export default class UnitSourceColor extends Component {
                   })}
                   <input type="hidden" name="unit{id}[]" value={`${item.name}{id}`} />
                   {this.renderValidator(item, acmscss)}
-                </div>
-              </li>
+                </Td>
+              </Tr>
             );
           } else if (item.type === 'checkbox') {
             return (
-              <li className='colorList'>
+              <Tr className={((value==="color") ? "colorList" : "")}>
                 {this.renderTh(item)}
-                <div>
+                <Td>
                   {item.option.map((option) => {
                     if (!option.label) {
                       return null;
@@ -152,13 +194,13 @@ export default class UnitSourceColor extends Component {
                   })}
                   <input type="hidden" name="unit{id}[]" value={`${item.name}{id}`} />
                   {this.renderValidator(item, acmscss)}
-                </div>
-              </li>
+                </Td>
+              </Tr>
             );
           } else if (item.type === 'image') {
-            return (<li className='colorList'>
+            return (<Tr className={((value==="color") ? "colorList" : "")}>
               {this.renderTh(item)}
-              <div className={classnames({ 'js-img_resize_cf': item.resize })}>
+              <Td className={classnames({ 'js-img_resize_cf': item.resize })}>
                 {preview ? null : `<!-- BEGIN_IF [{${item.name}@path}/nem] -->`}
                 <img src={`%{ARCHIVES_DIR}{${item.name}@path}`} className={classnames({ 'acms-admin-img-responsive': acmscss, 'js-img_resize_preview': item.resize })} style={item.normalSize ? { width: `${item.normalSize}px` } : null} alt={`{${item.name}@alt}`} />
                 <input type="hidden" name={`${item.name}{id}@old`} value={`{${item.name}@path}`} />
@@ -184,8 +226,8 @@ export default class UnitSourceColor extends Component {
                 {item.square && <input type="hidden" name={`${item.name}{id}@${item.square}`} value={item.squareSize} />}
                 <input type="hidden" name={`${item.name}{id}@filename`} value="" />
                 {this.renderValidator(item, acmscss)}
-              </div>
-            </li>);
+              </Td>
+            </Tr>);
           } else if (item.type === 'file') {
             let src = '/images/fileicon/';
             let alt = 'file';
@@ -199,9 +241,9 @@ export default class UnitSourceColor extends Component {
               src += 'file.svg';
             }
 
-            return (<li className='colorList'>
+            return (<Tr className={((value==="color") ? "colorList" : "")}>
               {this.renderTh(item, acmscss)}
-              <div>
+              <Td>
                 {preview ? null : `<!-- BEGIN_IF [{${item.name}@path}/nem] -->`}
                 <input type="hidden" name={`${item.name}{id}@old`} value={`{${item.name}@path}`} />
                 <input type="hidden" name={`${item.name}{id}@secret`} value={`{${item.name}@secret}`} />
@@ -222,25 +264,25 @@ export default class UnitSourceColor extends Component {
                 {item.fileNameMethod === 'fix' && item.fileName && <input type="hidden" name={`${item.name}{id}@filename`} value={item.fileName} />}
                 {item.fileNameMethod === 'asis' && <input type="hidden" name={`${item.name}{id}@filename`} value="@rawfilename" />}
                 {this.renderValidator(item, acmscss)}
-              </div>
-            </li>);
+              </Td>
+            </Tr>);
           } else if (item.type === 'lite-editor') {
             return (
-              <li className='colorList'>
+              <Tr className={((value==="color") ? "colorList" : "")}>
                 {this.renderTh(item, acmscss)}
-                <div>
+                <Td>
                   <textarea name={`${item.name}{id}`} className={classnames('js-lite-editor-field', { 'acms-admin-form-width-full': acmscss })}>{`{${item.name}}`}</textarea>
                   <input type="hidden" name="unit{id}[]" value={`${item.name}{id}`} />
                   {this.renderValidator(item, acmscss)}
                   {this.renderNoSearch(item, acmscss)}
-                </div>
-              </li>
+                </Td>
+              </Tr>
             );
           } else if (item.type === 'rich-editor') {
             return (
-              <li className='colorList'>
+              <Tr className={((value==="color") ? "colorList" : "")}>
                 {this.renderTh(item, acmscss)}
-                <div>
+                <Td>
                   <ConditionalWrap
                     condition={item.useExpand} wrap={children => <div className="js-expand js-acms-expand">
                       <div className="js-acms-expand-inner">
@@ -258,14 +300,14 @@ export default class UnitSourceColor extends Component {
                       <input type="hidden" name={`${item.name}{id}:extension`} value="rich-editor" />
                     </div>
                   </ConditionalWrap>
-                </div>
-              </li>
+                </Td>
+              </Tr>
             );
           } else if (item.type === 'table') {
             return (
-              <li className='colorList'>
+              <Tr className={((value==="color") ? "colorList" : "")}>
                 {this.renderTh(item, acmscss)}
-                <div>
+                <Td>
                   <div className="js-editable-table-field">
                     <div className="js-editable-table">
                       {preview ? null : `<!-- BEGIN_IF [{${item.name}}[delnl]/nem] -->\n`}
@@ -286,13 +328,13 @@ export default class UnitSourceColor extends Component {
                       <input type="hidden" name="unit{id}[]" value={`${item.name}{id}`} />
                     </div>
                   </div>
-                </div>
-              </li>
+                </Td>
+              </Tr>
             );
           } else if (item.type === 'media') {
-            return (<li className='colorList'>
+            return (<Tr className={((value==="color") ? "colorList" : "")}>
               {this.renderTh(item)}
-              <div className="js-media-field">
+              <Td className="js-media-field">
                 {!item.useDropArea && <Fragment>
                   <div>
                     { `<!-- BEGIN_IF [{${item.name}@thumbnail}/nem] -->`}
@@ -343,15 +385,15 @@ export default class UnitSourceColor extends Component {
                 <input type="hidden" name="unit{id}[]" value={`${item.name}{id}`} />
                 <input type="hidden" name={`${item.name}{id}:extension`} value="media" />
                 {this.renderValidator(item, acmscss)}
-              </div>
-            </li>);
+              </Td>
+            </Tr>);
           }
         })}
-      </ul>
+      </Table>
     );
   }
 }
 
-UnitSourceColor.defaultProps = {
+UnitSource.defaultProps = {
   preview: false
 };
