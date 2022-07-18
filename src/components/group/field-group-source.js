@@ -18,21 +18,7 @@ export default class FieldGroupSource extends Component {
   }
 
   renderValidator(item, acmscss, bottom = false) {
-    const { jsValidator , value} = this.props;
-
-    let P = "p";
-
-    switch(value){
-      case "classic":
-        P = "p";
-        break;
-      case "modan":
-        P = "span";
-        break;
-      case "color":
-        P = "span";
-        break;
-    }
+    const { preview, jsValidator } = this.props;
 
     if (!item.openValidator) {
       return null;
@@ -46,7 +32,9 @@ export default class FieldGroupSource extends Component {
         return (<Fragment>
           {(!jsValidator && !bottom) && <Fragment>
             {validator.message && <Fragment>
-              <P className={classnames({ 'acms-admin-text-error': acmscss })}>{validator.message}</P>
+              {preview ? null : `<!-- BEGIN ${name}:validator#${validator.option} -->`}
+              <p className={classnames({ 'acms-admin-text-error': acmscss })}>{validator.message}</p>
+              {preview ? null : `<!-- END ${name}:validator#${validator.option} -->`}
             </Fragment>}
           </Fragment>}
           {jsValidator &&
@@ -62,27 +50,29 @@ export default class FieldGroupSource extends Component {
   }
 
   wrapTable(children, title) {
-    const { direction , value} = this.props;
-    let TR = "tr";
-    let TH = "th";
+    const { direction, value } = this.props;
+
+    let Tr = "tr";
+    let Th = "th";
+
     switch(value){
       case "classic":
-        TR = "tr";
-        TH = "th"
+        Tr = "tr";
+        Th = "th";
         break;
       case "modan":
-        TR = "li";
-        TH = "label";
+        Tr = "li";
+        Th = "label";
         break;
       case "color":
-        TR = "li";
-        TH = "label";
+        Tr = "li";
+        Th = "label";
         break;
-
     }
+
     return (<ConditionalWrap
       condition={direction === 'vertical'}
-      wrap={child => <Tr className={((value==="color") ? "colorList" : "")}>
+      wrap={child => <Tr>
         <Th>{title}</Th>
         {child}
       </Tr>}
@@ -91,44 +81,40 @@ export default class FieldGroupSource extends Component {
 
 
   render() {
-    const { groupName, groupTitle, acmscss, groupitems, preview, direction , value } = this.props;
+    const { groupName, groupTitle, acmscss, groupitems, preview, direction, value } = this.props;
     const groupLength = groupitems.length;
 
     let Table = "table";
     let Tr = "tr";
-    let Th = "th";
+    let Th = "th"
     let Td = "td";
-
-    console.log(value+" group")
 
     switch(value){
       case "classic":
-        console.log("ccc")
         Table = "table";
         Tr = "tr";
-        Th = "th";
+        Th = "th"
         Td = "td";
         break;
       case "modan":
-        console.log("mmm")
         Table = "ul";
         Tr = "li";
-        Th = "p";
+        Th = "label"
         Td = "div";
         break;
       case "color":
         Table = "ul";
         Tr = "li";
-        Th = "p";
-        Td = "div";
+        Th = "label"
+        Td = "div"
         break;
     }
 
     return (<Fragment>
       {groupTitle && <h2 className={classnames({ 'acms-admin-admin-title2': acmscss })}>{groupTitle}</h2>}
       {groupName && <Table className={classnames('js-fieldgroup-sortable', { 'adminTable acms-admin-table-admin-edit': acmscss })} ref={table => this.table = table}>
-        <thead className={classnames({ 'acms-admin-hide-sp': acmscss })}>
-          <Tr className={((value==="color") ? "colorList" : "")}>
+        <head className={classnames({ 'acms-admin-hide-sp': acmscss })}>
+          <Tr  className={(value === "color")? "color" : ""}>
             <Th className={classnames({ 'acms-admin-table-left acms-admin-admin-config-table-item-handle': acmscss })}>&nbsp;</Th>
             {direction === 'horizontal' &&
               <Fragment>
@@ -138,12 +124,13 @@ export default class FieldGroupSource extends Component {
                 </Th>))}
               </Fragment>
             }
-            {direction === 'vertical' && <Th />}
+            {direction === 'vertical' && <th />}
             <Th className={classnames({ 'acms-admin-table-left acms-admin-admin-config-table-action': acmscss })}>削除</Th>
           </Tr>
-        </thead>
-        <tbody>
-          <Tr className={((value==="color") ? "colorList sortable-item" : "sortable-item")} >
+        </head>
+        <body>
+          {preview ? null : `<!-- BEGIN ${groupName}:loop -->`}
+          <Tr className={(value === "color")? "color sortable-item" : "sortable-item"} >
             <Td className="item-handle acms-admin-table-nowrap">
               {acmscss && <i className="acms-admin-icon-sort" />}
             </Td>
@@ -202,6 +189,7 @@ export default class FieldGroupSource extends Component {
                   }
 
                   return this.wrapTable(<Td>
+                    {preview ? null : `<!-- BEGIN_IF [{${item.name}@path}/nem] -->`}
                     <div className={classnames({ 'acms-admin-form-checkbox': acmscss })}>
                       <input type="checkbox" name={`${item.name}@edit[]`} value="delete" id={`input-checkbox-${item.name}{i}@edit[]`} />
                       <label htmlFor={`input-checkbox-${item.name}{i}@edit[]`}>
@@ -210,6 +198,7 @@ export default class FieldGroupSource extends Component {
                     <a href={`%{ARCHIVES_DIR}{${item.name}@path}`}>
                       <img src={src} width="64" height="64" alt={alt} />
                     </a>
+                    {preview ? null : '<!-- END_IF -->'}
                     <input type="hidden" name={`${item.name}@old[]`} value={`{${item.name}@path}`} />
                     {item.extension && <input type="hidden" name={`${item.name}@extension[]`} value={item.extension} />}
                     {item.fileNameMethod === 'random' && item.fileName && <input type="hidden" name={`${item.name}@filename[]`} value="" />}
@@ -226,6 +215,7 @@ export default class FieldGroupSource extends Component {
                   const hiddenStyle = Object.assign({}, style, { display: 'none' });
 
                   return this.wrapTable(<Td className={classnames({ 'js-img_resize_cf': item.resize })}>
+                    {preview ? null : `<!-- BEGIN_IF [{${item.name}@path}/nem] -->`}
                     <img
                       src={`%{ARCHIVES_DIR}{${item.name}@path}`}
                       className={classnames({ 'js-img_resize_preview': item.resize })} style={style} alt={`{${item.name}@alt}`}
@@ -236,10 +226,12 @@ export default class FieldGroupSource extends Component {
                       {acmscss && <i className="acms-admin-ico-checkbox" />}
                       削除
                     </label>
+                    {preview ? null : '<!-- ELSE -->'}
                     <img
                       src={`%{ARCHIVES_DIR}{${item.name}@path}`}
                       className={classnames({ 'js-img_resize_preview': item.resize })} style={hiddenStyle}
                     />
+                    {preview ? null : '<!-- END_IF -->'}
                     <input type="file" name={`${item.name}[]`} className={classnames({ 'js-img_resize_input': item.resize })} /><br />
                     {item.alt && <Fragment>代替テキスト:<input type="text" name={`${item.name}@alt[]`} value={`{${item.name}@alt}`} size="40" /></Fragment>}
                     {item.normalSize && <input type="hidden" name={`${item.name}@${item.normal}[]`} value={item.normalSize} />}
@@ -252,6 +244,7 @@ export default class FieldGroupSource extends Component {
                   return this.wrapTable(<Td className="js-media-field">
                     {!item.useDropArea && <Fragment>
                       <div>
+                        {`<!-- BEGIN_IF [{${item.name}@thumbnail}/nem] -->`}
                         <ConditionalWrap
                           condition={item.mediaType === 'file'}
                           wrap={children => <a href={`%{MEDIA_ARCHIVES_DIR}{${item.name}@path}`}>{children}</a>}
@@ -266,6 +259,7 @@ export default class FieldGroupSource extends Component {
                             } })}
                           />
                         </ConditionalWrap>
+                        {'<!-- ELSE -->'}
                         <img
                           src=""
                           {...(item.mediaType === 'file' ?
@@ -277,6 +271,7 @@ export default class FieldGroupSource extends Component {
                         { style: { display: 'none' } })}
                           className={classnames('js-preview', { 'acms-admin-img-responsive': acmscss })}
                         />
+                        {'<!-- END_IF -->'}
                         <p className="js-text acms-admin-text-danger" style={{ display: 'none' }}>許可されていないファイルのため挿入できません。</p>
                       </div>
                       <div className={classnames({ 'acms-admin-margin-top-mini': acmscss })}>
@@ -324,6 +319,9 @@ export default class FieldGroupSource extends Component {
                   return this.wrapTable(<Td>
                     <div className="js-editable-table-field">
                       <div className="js-editable-table">
+                        {preview ? null : `<!-- BEGIN_IF [{${item.name}}[delnl]/nem] -->\n`}
+                        {preview ? null : `{${item.name}}[raw]`}
+                        {preview ? null : '<!-- ELSE -->'}
                         <table>
                           <tr>
                             <th>サンプル</th>
@@ -334,6 +332,7 @@ export default class FieldGroupSource extends Component {
                             <td>サンプル</td>
                           </tr>
                         </table>
+                        {preview ? null : '<!-- END_IF -->'}
                         <input type="hidden" className="js-editable-table-dest" value={`{${item.name}}`} name={`${item.name}[]`} />
                       </div>
                     </div>
@@ -345,11 +344,12 @@ export default class FieldGroupSource extends Component {
               <input type="button" className={classnames('item-delete', { 'acms-admin-btn-admin acms-admin-btn-admin-danger': acmscss })} value="削除" />
             </Td>
           </Tr>
-          {preview ? null : <Tr className="sortable-item item-template">
+          {preview ? null : `<!-- END ${groupName}:loop -->`}
+          {preview ? null : <tr className="sortable-item item-template">
             <Td className="item-handle acms-admin-table-nowrap">{acmscss && <i className="acms-admin-icon-sort" />}</Td>
             <ConditionalWrap
               condition={direction === 'vertical'}
-              wrap={children => <Td><Table>{children}</Table></Td>}
+              wrap={children => <td><table>{children}</table></td>}
             >
               {groupitems.map((item) => {
                 if (item.type === 'text') {
@@ -470,6 +470,9 @@ export default class FieldGroupSource extends Component {
                   return this.wrapTable(<Td>
                     <div className="js-editable-table-field">
                       <div className="js-editable-table">
+                        {`<!-- BEGIN_IF [{${item.name}}[delnl]/nem] -->\n`}
+                        {`{${item.name}}[raw]`}
+                        {'<!-- ELSE -->'}
                         <table>
                           <tr>
                             <th>サンプル</th>
@@ -480,6 +483,7 @@ export default class FieldGroupSource extends Component {
                             <td>サンプル</td>
                           </tr>
                         </table>
+                        {'<!-- END_IF -->'}
                         <input type="hidden" className="js-editable-table-dest" value="" name={`${item.name}[]`} />
                       </div>
                     </div>
@@ -490,15 +494,15 @@ export default class FieldGroupSource extends Component {
             <Td className="acms-admin-table-nowrap">
               <input type="button" className={classnames('item-delete', { 'acms-admin-btn-admin acms-admin-btn-admin-danger': acmscss })} value="削除" />
             </Td>
-          </Tr>}
-        </tbody>
-        <tfoot>
+          </tr>}
+        </body>
+        <foot>
           <Tr>
             <Td colSpan={direction === 'horizontal' ? groupLength + 2 : 3}>
               <input type="button" className={classnames('item-insert', { 'acms-admin-btn-admin': acmscss })} value="追加" />
             </Td>
           </Tr>
-        </tfoot>
+        </foot>
       </Table>}
       {groupName && <Fragment>
         {groupitems.map(item => (<Fragment>

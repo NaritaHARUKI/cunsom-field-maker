@@ -17,65 +17,37 @@ export default class UnitGroupConfirmSource extends Component {
   }
 
   render() {
-    const { unitGroupTitle, unitGroupName, unitgroupitems, acmscss, direction, value} = this.props;
-    
-    let Table = "table";
-    let Tr = "tr";
-    let Th = "th";
-    let Td = "td";
-
-    switch(value){
-      case "classic":
-        Table = "table";
-        Tr = "tr";
-        Th = "th";
-        Td = "label";
-        break;
-      case "modan":
-        Table = "ul";
-        Tr = "li";
-        Th = "div";
-        Td = "label";
-        break;
-      case "color":
-        Table = "ul";
-        Tr = "li";
-        Th = "div";
-        Td = "label";
-        break;
-    }
-
-
+    const { unitGroupTitle, unitGroupName, unitgroupitems, acmscss, direction } = this.props;
     return (<Fragment>
       {unitGroupTitle && <h2 className={classnames({ 'acms-admin-admin-title2': acmscss })}>{unitGroupTitle}</h2>}
-      <Table className={classnames({ 'adminTable acms-admin-table-admin-edit acms-admin-table-admin-edit-bordered': acmscss })}>
+      <table className={classnames({ 'adminTable acms-admin-table-admin-edit acms-admin-table-admin-edit-bordered': acmscss })}>
         {direction === 'horizontal' &&
           <thead className={classnames({ 'acms-admin-hide-sp': acmscss })}>
-            <Tr>
+            <tr>
               <Fragment>
-                {unitgroupitems.map(item => (<Th className={classnames({ 'acms-admin-table-left': acmscss })}>{item.title}</Th>))}
+                {unitgroupitems.map(item => (<th className={classnames({ 'acms-admin-table-left': acmscss })}>{item.title}</th>))}
               </Fragment>
-            </Tr>
+            </tr>
           </thead>
         }
         <tbody>
           {`<!-- BEGIN ${unitGroupName}:loop -->`}
-          <Tr>
+          <tr>
             <ConditionalWrap
               condition={direction === 'vertical'}
               wrap={children => <td><table>{children}</table></td>}
             >
               {unitgroupitems.map((item) => {
                 if (item.type === 'text') {
-                  return this.wrapTable(<Td>
+                  return this.wrapTable(<td>
                     {`{${item.name}}`}
-                  </Td>, item.title);
+                  </td>, item.title);
                 } else if (item.type === 'textarea') {
-                  return this.wrapTable(<Td>
+                  return this.wrapTable(<td>
                     {`{${item.name}}[escape|nl2br]`}
-                  </Td>, item.title);
+                  </td>, item.title);
                 } else if (item.type === 'select') {
-                  return this.wrapTable(<Td>
+                  return this.wrapTable(<td>
                     {item.option.map((option) => {
                       if (!option.label) {
                         return null;
@@ -86,9 +58,9 @@ export default class UnitGroupConfirmSource extends Component {
                         {'<!-- END_IF -->'}
                       </div>);
                     })}
-                  </Td>, item.title);
+                  </td>, item.title);
                 } else if (item.type === 'radio') {
-                  return this.wrapTable(<Td>
+                  return this.wrapTable(<td>
                     {item.option.map((option) => {
                       if (!option.label) {
                         return null;
@@ -97,7 +69,7 @@ export default class UnitGroupConfirmSource extends Component {
                       ${option.label}
                       <!-- END_IF -->`);
                     })}
-                  </Td>, item.title);
+                  </td>, item.title);
                 } else if (item.type === 'file') {
                   let src = '/images/fileicon/';
                   let alt = 'file';
@@ -107,21 +79,21 @@ export default class UnitGroupConfirmSource extends Component {
                   } else {
                     src += 'file.svg';
                   }
-                  return this.wrapTable(<Td>
+                  return this.wrapTable(<td>
                     {`<!-- BEGIN ${item.name}@path:veil -->`}
                     <a href={`%{ARCHIVES_DIR}{${item.name}@path}`}>
                       <img src={src} width="64" height="64" alt={alt} />
                     </a>
                     {`<!-- END ${item.name}@path:veil -->`}
-                  </Td>, item.title);
+                  </td>, item.title);
                 } else if (item.type === 'image') {
-                  return this.wrapTable(<Td>
+                  return this.wrapTable(<td>
                     {`<!-- BEGIN ${item.name}@path:veil -->`}
                     <img src={`%{ARCHIVES_DIR}{${item.name}@path}`} width="64" height="64" alt={`{${item.name}@alt}`} />
                     {`<!-- END ${item.name}@path:veil -->`}
-                  </Td>, item.title);
+                  </td>, item.title);
                 } else if (item.type === 'media') {
-                  return this.wrapTable(<Td>
+                  return this.wrapTable(<td>
                     {`<!-- BEGIN_IF [{${item.name}@type}/eq/file] -->`}
                     <a href={`{${item.name}@path}`}>
                       <img
@@ -151,26 +123,26 @@ export default class UnitGroupConfirmSource extends Component {
                   <p>{`{${item.name}@text}`}</p>
                   {'<!-- END_IF -->'}
                   {'<!-- END_IF -->'}
-                  </Td>, item.title);
+                  </td>, item.title);
                 } else if (item.type === 'lite-editor') {
-                  return this.wrapTable(<Td>
+                  return this.wrapTable(<td>
                     {`{${item.name}}[raw]`}
-                  </Td>, item.name);
+                  </td>, item.name);
                 } else if (item.type === 'rich-editor') {
-                  return this.wrapTable(<Td>
+                  return this.wrapTable(<td>
                     {`{${item.name}@html}[raw]`}
-                  </Td>, item.name);
+                  </td>, item.name);
                 } else if (item.type === 'table') {
-                  return this.wrapTable(<Td>
+                  return this.wrapTable(<td>
                     {`{${item.name}}[raw]`}
-                  </Td>, item.name);
+                  </td>, item.name);
                 }
               })}
             </ConditionalWrap>
-          </Tr>
+          </tr>
           {`<!-- END ${unitGroupName}:loop -->`}
         </tbody>
-      </Table>
+      </table>
     </Fragment>);
   }
 }

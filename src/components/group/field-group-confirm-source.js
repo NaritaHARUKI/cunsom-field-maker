@@ -6,46 +6,92 @@ const ConditionalWrap = ({ condition, wrap, children }) => condition ? wrap(chil
 export default class FieldGroupConfirmSource extends Component {
 
   wrapTable(children, title) {
-    const { direction } = this.props;
+    const { direction , value} = this.props;
+
+    let Tr = "tr";
+    let Th = "th";
+
+    switch(value){
+      case "classic":
+        Tr = "tr";
+        Th = "th";
+        break;
+      case "modan":
+        Tr = "li";
+        Th = "label";
+        break;
+      case "color":
+        Tr = "li";
+        Th = "label";
+        break;
+    }
+
     return (<ConditionalWrap
       condition={direction === 'vertical'}
-      wrap={children => <tr>
-        <th>{title}</th>
+      wrap={children => <Tr>
+        <Th>{title}</Th>
         {children}
-      </tr>}
+      </Tr>}
     >{children}</ConditionalWrap>);
   }
 
   render() {
-    const { groupTitle, groupName, groupitems, acmscss, direction } = this.props;
+    const { groupTitle, groupName, groupitems, acmscss, direction, value } = this.props;
+
+    let Table = "table";
+    let Tr = "tr";
+    let Th = "th"
+    let Td = "td";
+
+    switch(value){
+      case "classic":
+        Table = "table";
+        Tr = "tr";
+        Th = "th"
+        Td = "td";
+        break;
+      case "modan":
+        Table = "ul";
+        Tr = "li";
+        Th = "label"
+        Td = "div";
+        break;
+      case "color":
+        Table = "ul";
+        Tr = "li";
+        Th = "label"
+        Td = "div"
+        break;
+    }
+
     return (<Fragment>
       {groupTitle && <h2 className={classnames({ 'acms-admin-admin-title2': acmscss })}>{groupTitle}</h2>}
-      <table className={classnames({ 'adminTable acms-admin-table-admin-edit': acmscss })}>
+      <Table className={classnames({ 'adminTable acms-admin-table-admin-edit': acmscss })}>
         {direction === 'horizontal' &&
-          <thead className={classnames({ 'acms-admin-hide-sp': acmscss })}>
-            <tr>
-              {groupitems.map((item) => (<th className={classnames({ "acms-admin-table-left": acmscss })}>{item.title}</th>))}
-            </tr>
-          </thead>
+          <head className={classnames({ 'acms-admin-hide-sp': acmscss })}>
+            <Tr>
+              {groupitems.map((item) => (<Th className={classnames({ "acms-admin-table-left": acmscss })}>{item.title}</Th>))}
+            </Tr>
+          </head>
         }
-        <tbody>
+        <body>
           {`<!-- BEGIN ${groupName}:loop -->`}
-          <tr>
+          <Tr>
             <ConditionalWrap
               condition={direction === 'vertical'}
               wrap={children => <td><table>{children}</table></td>}
             >
               {groupitems.map((item) => {
                 if (item.type === 'text') {
-                  return this.wrapTable(<td>
+                  return this.wrapTable(<Td>
                     {`{${item.name}}`}
-                  </td>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'textarea') {
-                  return this.wrapTable(<td>
+                  return this.wrapTable(<Td>
                     {`{${item.name}}[escape|nl2br]`}
-                  </td>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'select') {
-                  return this.wrapTable(<td>
+                  return this.wrapTable(<Td>
                     {item.option.map((option) => {
                       if (!option.label) {
                         return null;
@@ -56,9 +102,9 @@ export default class FieldGroupConfirmSource extends Component {
                         {'<!-- END_IF -->'}
                       </div>);
                     })}
-                  </td>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'radio') {
-                  return this.wrapTable(<td>
+                  return this.wrapTable(<Td>
                     {item.option.map((option) => {
                       if (!option.label) {
                         return null;
@@ -67,7 +113,7 @@ export default class FieldGroupConfirmSource extends Component {
                         ${option.label}
                         <!-- END_IF -->`);
                     })}
-                  </td>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'file') {
                   let src = '/images/fileicon/';
                   let alt = 'file';
@@ -78,21 +124,21 @@ export default class FieldGroupConfirmSource extends Component {
                     src += 'file.svg';
                   }
 
-                  return this.wrapTable(<td>
+                  return this.wrapTable(<Td>
                     {`<!-- BEGIN ${item.name}@path:veil -->`}
                     <a href={`%{ARCHIVES_DIR}{${item.name}@path}`}>
                       <img src={src} width="64" height="64" alt={alt} />
                     </a>
                     {`<!-- END ${item.name}@path:veil -->`}
-                  </td>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'image') {
-                  return this.wrapTable(<td>
+                  return this.wrapTable(<Td>
                     {`<!-- BEGIN ${item.name}@path:veil -->`}
                     <img src={`%{ARCHIVES_DIR}{${item.name}@path}`} className={classnames({ 'acms-admin-img-responsive': acmscss })} alt={`{${item.name}@alt}`} />
                     {`<!-- END ${item.name}@path:veil -->`}
-                  </td>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'media') {
-                  return this.wrapTable(<td>
+                  return this.wrapTable(<Td>
                     {`<!-- BEGIN_IF [{${item.name}@type}/eq/file] -->`}
                     <a href={`{${item.name}@path}`}>
                       <img
@@ -122,26 +168,26 @@ export default class FieldGroupConfirmSource extends Component {
                   <p>{`{${item.name}@text}`}</p>
                   {'<!-- END_IF -->'}
                   {'<!-- END_IF -->'}
-                  </td>, item.title);
+                  </Td>, item.title);
                 } else if (item.type === 'lite-editor') {
-                  return this.wrapTable(<td>
+                  return this.wrapTable(<Td>
                     {`{${item.name}}[raw]`}
-                  </td>, item.name);
+                  </Td>, item.name);
                 } else if (item.type === 'rich-editor') {
-                  return this.wrapTable(<td>
+                  return this.wrapTable(<Td>
                     {`{${item.name}@html}[raw]`}
-                  </td>, item.name);
+                  </Td>, item.name);
                 } else if (item.type === 'table') {
-                  return this.wrapTable(<td>
+                  return this.wrapTable(<Td>
                     {`{${item.name}}[raw]`}
-                  </td>, item.name);
+                  </Td>, item.name);
                 }
               })}
             </ConditionalWrap>
-          </tr>
+          </Tr>
           {`<!-- END ${groupName}:loop -->`}
-        </tbody>
-      </table>
+        </body>
+      </Table>
     </Fragment>);
   }
 }

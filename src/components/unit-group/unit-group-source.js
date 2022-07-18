@@ -17,28 +17,23 @@ export default class UnitGroupSource extends Component {
   }
 
   wrapTable(children, title) {
-    const { direction , value} = this.props;
-
+    const { direction, value } = this.props;
     let Tr = "tr";
     let Th = "th";
-
-    
     switch(value){
-       case "classic":
-          Tr = "tr";
-          Th = "th";
-         break;
-        case "modan":
-          Tr = "div";
-          Th = "label";
-         break;
-        case "color":
-          Tr = "div";
-          Th = "label";
-          break;
+      case "classic":
+        Tr = "tr";
+        Th = "th";
+        break;
+      case "modan":
+        Tr = "li";
+        Th = "label";
+        break;
+      case "color":
+        Tr = "li";
+        Th = "label";
+        break;
     }
-
-
     return (<ConditionalWrap
       condition={direction === 'vertical'}
       wrap={children => <Tr>
@@ -75,32 +70,44 @@ export default class UnitGroupSource extends Component {
   }
 
   render() {
-    const { unitGroupName, unitGroupTitle, acmscss, unitgroupitems, preview, direction, value} = this.props;
+    const { unitGroupName, unitGroupTitle, acmscss, unitgroupitems, preview, direction, value } = this.props;
     const groupLength = unitgroupitems.length;
 
     let Table = "table";
     let Tr = "tr";
-    let Th = "th";
     let Td = "td";
+    let Th = "th";
+    let Thead = "thead";
+    let Tbody = "tbody";
+    let Tfoot = "tfoot";
 
     switch(value){
       case "classic":
         Table = "table";
         Tr = "tr";
+        Td = "td";
         Th = "th";
-        Td = "label";
+        Thead = "thead";
+        Tbody = "tbody";
+        Tfoot = "tfoot";
         break;
       case "modan":
         Table = "ul";
         Tr = "li";
-        Th = "div";
-        Td = "label";
+        Td = "div";
+        Th = "label";
+        Thead = "head";
+        Tbody = "body";
+        Tfoot = "foot";
         break;
       case "color":
         Table = "ul";
         Tr = "li";
-        Th = "div";
-        Td = "label";
+        Td = "div";
+        Th = "label";
+        Thead = "head";
+        Tbody = "body";
+        Tfoot = "foot";
         break;
     }
 
@@ -110,24 +117,24 @@ export default class UnitGroupSource extends Component {
         ref={table => this.table = table}
         className={classnames('js-fieldgroup-sortable', { 'adminTable acms-admin-table-admin-edit': acmscss })}
       >
-        <thead className={classnames({ 'acms-admin-hide-sp': acmscss })}>
-          <Tr>
+        <Thead className={classnames({ 'acms-admin-hide-sp': acmscss })}>
+          <Tr className={(value === "color")? "color" : ""}>
             <Th className={classnames({ 'acms-admin-table-left acms-admin-admin-config-table-item-handle': acmscss })}>&nbsp;</Th>
             {direction === 'horizontal' &&
               <Fragment>
-                {unitgroupitems.map(item => (<Th className={classnames({ 'acms-admin-table-left': acmscss })}>
+                {unitgroupitems.map(item => (<th className={classnames({ 'acms-admin-table-left': acmscss })}>
                   {item.title}
                   {item.tooltip && <i className="acms-admin-icon-tooltip js-acms-tooltip" data-acms-tooltip={item.tooltip} />}
-                </Th>))}
+                </th>))}
               </Fragment>
             }
-            {direction === 'vertical' && <Th />}
-            <Th className={classnames({ 'acms-admin-table-left acms-admin-admin-config-table-action': acmscss })}>削除</Th>
+            {direction === 'vertical' && <th />}
+            <th className={classnames({ 'acms-admin-table-left acms-admin-admin-config-table-action': acmscss })}>削除</th>
           </Tr>
-        </thead>
-        <tbody>
+        </Thead>
+        <Tbody>
           {preview ? null : `<!-- BEGIN ${unitGroupName}:loop -->`}
-          <Tr className="sortable-item">
+          <Tr className={(value === "color sortable-item")? "color" : "sortable-item"}>
             <Td className="item-handle acms-admin-table-nowrap">
               {acmscss && <i className="acms-admin-icon-sort" />}
             </Td>
@@ -341,7 +348,7 @@ export default class UnitGroupSource extends Component {
             </Td>
           </Tr>
           {preview ? null : `<!-- END ${unitGroupName}:loop -->`}
-          {preview ? null : <Tr className="sortable-item item-template">
+          {preview ? null : <Tr className={(value === "color ")? "color sortable-item item-template" : "sortable-item item-template"}>
             <Td className="item-handle acms-admin-table-nowrap">{acmscss && <i className="acms-admin-icon-sort" />}</Td>
             <ConditionalWrap
               condition={direction === 'vertical'}
@@ -485,14 +492,14 @@ export default class UnitGroupSource extends Component {
               <input type="button" className={classnames('item-delete', { 'acms-admin-btn-admin acms-admin-btn-admin-danger': acmscss })} value="削除" />
             </Td>
           </Tr>}
-        </tbody>
-        <tfoot>
+        </Tbody>
+        <Tfoot>
           <Tr>
             <Td colSpan={groupLength + 2}>
               <input type="button" className={classnames('item-insert', { 'acms-admin-btn-admin': acmscss })} value="追加" />
             </Td>
           </Tr>
-        </tfoot>
+        </Tfoot>
       </Table>}
       {unitGroupName && <Fragment>
         {unitgroupitems.map(item => (<Fragment>

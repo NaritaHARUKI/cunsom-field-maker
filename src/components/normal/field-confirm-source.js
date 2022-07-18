@@ -9,46 +9,46 @@ export default class FieldConfirmSource extends Component {
   }
 
   render() {
-    const { customfield, acmscss , value } = this.props;
+    const { customfield, acmscss ,value} = this.props;
 
-    let Element = "table";
+    let Table = "table";
     let Tr = "tr";
-    let Td = "div";
-    let Th = "th";
+    let Th = "th"
+    let Td = "td";
 
     switch(value){
       case "classic":
-        Element = "table";
+        Table = "table";
+        Th = "th"
         Tr = "tr";
-        Td = "div";
-        Th = "th";
+        Td = "td";
         break;
       case "modan":
-        Element = "ul";
-        Tr = "li"
-        Td = "div";
+        Table = "ul";
         Th = "label"
-        break;
-      case "color":
-        Element = "ul";
         Tr = "li";
         Td = "div";
+        break;
+      case "color":
+        Table = "ul";
         Th = "label"
+        Tr = "li";
+        Td = "div"
         break;
     }
 
-    return (<Element className={classnames({ 'acms-admin-table-admin-edit': acmscss })}>
+    return (<Table className={classnames({ 'acms-admin-table-admin-edit': acmscss })}>
       {customfield.map((item, index) => {
         if (!item.name) {
           return null;
         }
         if (item.type === 'text') {
-          return (<tr key={index}>
+          return (<Tr key={index}>
             <Th>{item.title}</Th>
             <Td>
               {`{${item.name}}`}
             </Td>
-          </tr>);
+          </Tr>);
         } else if (item.type === 'textarea') {
           return (<Tr key={index}>
             <Th>{item.title}</Th>
@@ -61,6 +61,7 @@ export default class FieldConfirmSource extends Component {
             <Th>{item.title}</Th>
             <Td>
               {item.option.map(option => (<div>
+                {`<!-- BEGIN_IF [{${item.name}}/eq/${option.value}] -->`}
                 {option.label}
                 {'<!-- END_IF -->'}
               </div>))}
@@ -79,9 +80,12 @@ export default class FieldConfirmSource extends Component {
           return (<Tr key={index}>
             <Th>{item.title}</Th>
             <Td>
+              {`<!-- BEGIN ${item.name}:loop -->`}
+              {`<!-- BEGIN ${item.name}:glue -->,<!-- END ${item.name}:glue -->`}
               {item.option.map(option => `<!-- BEGIN_IF [{${item.name}}/eq/${option.value}] -->
               ${option.value}
               <!-- END_IF -->`)}
+              {`<!-- END ${item.name}:loop -->`}
             </Td>
           </Tr>);
         } else if (item.type === 'file') {
@@ -115,6 +119,7 @@ export default class FieldConfirmSource extends Component {
           return (<Tr key={index}>
             <Th>{item.title}</Th>
             <Td>
+                {`<!-- BEGIN_IF [{${item.name}@type}/eq/file] -->`}
                 <a href={`{${item.name}@path}`}>
                   <img
                     alt={`{${item.name}@alt}`}
@@ -122,7 +127,11 @@ export default class FieldConfirmSource extends Component {
                     style={{ width: '64px', height: 'auto' }}
                   />
                 </a>
+                {`<!-- END_IF -->`}
+                {`<!-- BEGIN_IF [{${item.name}@type}/eq/image] -->`}
+                {`<!-- BEGIN_IF [{${item.name}@link}/nem] -->`}
                 <a href={`{${item.name}@link}`}>
+                {`<!-- END_IF -->`}   
                 {item.useFocusImage && <div style={{ width: `${item.focusImageWidth}px`, height: `${item.focusImageHeight}px` }}>
                 <img className="js-focused-image" data-focus-x={`{${item.name}@focalX}`} data-focus-y={`{${item.name}@focalY}`} alt={`{${item.name}@alt}`} src={`%{MEDIA_ARCHIVES_DIR}{${item.name}@path}[resizeImg(${item.focusImageWidth})]`} />
                 </div>}
@@ -131,9 +140,14 @@ export default class FieldConfirmSource extends Component {
                   alt={`{${item.name}@alt}`}
                   src={`%{MEDIA_ARCHIVES_DIR}{${item.name}@path}`}
                 />}
+                {`<!-- BEGIN_IF [{${item.name}@link}/nem] -->`}
                 </a>
+                {`<!-- END_IF -->`}
 
+              {`<!-- BEGIN_IF [{${item.name}@text}/nem] -->`}
               <p>{`{${item.name}@text}`}</p>
+              {'<!-- END_IF -->'}
+              {'<!-- END_IF -->'}
             </Td>
           </Tr>);
         } else if (item.type === 'rich-editor') {
@@ -159,6 +173,6 @@ export default class FieldConfirmSource extends Component {
           </Tr>)
         }
       })}
-    </Element>);
+    </Table>);
   }
 }

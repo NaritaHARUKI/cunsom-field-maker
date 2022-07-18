@@ -7,30 +7,31 @@ export default class UnitConfirmSource extends Component {
   }
 
   render() {
-    const { customunit, acmscss , value} = this.props;
+    const { customunit, acmscss,value } = this.props;
+
     let Table = "table";
-    let Th = "th";
     let Tr = "tr";
     let Td = "td";
+    let Th = "th";
 
     switch(value){
       case "classic":
         Table = "table";
-        Th = "th"
         Tr = "tr";
         Td = "td";
+        Th = "th"
         break;
       case "modan":
         Table = "ul";
-        Th = "div"
         Tr = "li";
         Td = "div";
+        Th = "label"
         break;
       case "color":
         Table = "ul";
-        Th = "div"
         Tr = "li";
         Td = "div";
+        Th = "label"
         break;
     }
 

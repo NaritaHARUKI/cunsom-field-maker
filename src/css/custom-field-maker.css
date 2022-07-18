@@ -439,3 +439,13 @@
   height: auto;
   vertical-align: middle;
 }
+
+ul{
+  padding: 1em 1em;
+}
+
+.color{
+  margin: 10px;
+  padding: 5px;
+  background: #e5e5e5;
+}

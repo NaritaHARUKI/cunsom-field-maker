@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactTooltip from 'react-tooltip';
-import Base from '../base';
+import Base from './base';
 
 export default class Field extends Base {
 

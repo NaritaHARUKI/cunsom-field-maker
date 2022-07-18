@@ -52,23 +52,20 @@ export default class UnitSource extends Component {
   }
 
   renderTh(item) {
-
     const { value } = this.props;
+    let Th = "th";
 
-    let Th = "th"
-    
     switch(value){
       case "classic":
         Th = "th";
         break;
       case "modan":
-        Th = "div";
+        Th = "label";
         break;
       case "color":
-        Th = "div";
-        break;
+        Th = "label"
+        break;    
     }
-
     return (
       <Th>
         {item.title}
@@ -80,7 +77,7 @@ export default class UnitSource extends Component {
   }
 
   render() {
-    const { acmscss, customunit, preview, value} = this.props;
+    const { acmscss, customunit, preview, value } = this.props;
 
     let Table = "table";
     let Tr = "tr";
@@ -100,17 +97,15 @@ export default class UnitSource extends Component {
       case "color":
         Table = "ul";
         Tr = "li";
-        Td = "div";
+        Td = "div"
         break;
     }
-
-
 
     return (
       <Table className={classnames({ 'acms-admin-table-admin-edit': acmscss })} ref={table => this.table = table}>
         {customunit.map((item) => {
           if (item.type === 'text') {
-            return (<Tr className={((value==="color") ? "colorList" : "")}>
+            return (<Tr className={(value === "color")? "color" : ""}>
               {this.renderTh(item, acmscss)}
               <Td>
                 <input type="text" name={`${item.name}{id}`} value={`{${item.name}}`} className={classnames({ 'acms-admin-form-width-full': acmscss })} />
@@ -121,7 +116,7 @@ export default class UnitSource extends Component {
             </Tr>);
           } else if (item.type === 'textarea') {
             return (
-              <Tr className={((value==="color") ? "colorList" : "")}>
+              <Tr className={(value === "color")? "color" : ""}>
                 {this.renderTh(item, acmscss)}
                 <Td>
                   <textarea name={`${item.name}{id}`} className={classnames({ 'acms-admin-form-width-full': acmscss })}>{`{${item.name}}`}</textarea>
@@ -132,7 +127,7 @@ export default class UnitSource extends Component {
             );
           } else if (item.type === 'select') {
             return (
-              <Tr className={((value==="color") ? "colorList" : "")}>
+              <Tr className={(value === "color")? "color" : ""}>
                 {this.renderTh(item, acmscss)}
                 <Td>
                   <select name={`${item.name}{id}`} className={classnames({ 'acms-admin-form-width-full': acmscss })}>
@@ -151,7 +146,7 @@ export default class UnitSource extends Component {
             );
           } else if (item.type === 'radio') {
             return (
-              <Tr className={((value==="color") ? "colorList" : "")}>
+              <Tr className={(value === "color")? "color" : ""}>
                 {this.renderTh(item)}
                 <Td>
                   {item.option.map((option) => {
@@ -175,7 +170,7 @@ export default class UnitSource extends Component {
             );
           } else if (item.type === 'checkbox') {
             return (
-              <Tr className={((value==="color") ? "colorList" : "")}>
+              <Tr className={(value === "color")? "color" : ""}>
                 {this.renderTh(item)}
                 <Td>
                   {item.option.map((option) => {
@@ -198,7 +193,7 @@ export default class UnitSource extends Component {
               </Tr>
             );
           } else if (item.type === 'image') {
-            return (<Tr className={((value==="color") ? "colorList" : "")}>
+            return (<Tr className={(value === "color")? "color" : ""}>
               {this.renderTh(item)}
               <Td className={classnames({ 'js-img_resize_cf': item.resize })}>
                 {preview ? null : `<!-- BEGIN_IF [{${item.name}@path}/nem] -->`}
@@ -241,7 +236,7 @@ export default class UnitSource extends Component {
               src += 'file.svg';
             }
 
-            return (<Tr className={((value==="color") ? "colorList" : "")}>
+            return (<Tr className={(value === "color")? "color" : ""}>
               {this.renderTh(item, acmscss)}
               <Td>
                 {preview ? null : `<!-- BEGIN_IF [{${item.name}@path}/nem] -->`}
@@ -268,7 +263,7 @@ export default class UnitSource extends Component {
             </Tr>);
           } else if (item.type === 'lite-editor') {
             return (
-              <Tr className={((value==="color") ? "colorList" : "")}>
+              <Tr className={(value === "color")? "color" : ""}>
                 {this.renderTh(item, acmscss)}
                 <Td>
                   <textarea name={`${item.name}{id}`} className={classnames('js-lite-editor-field', { 'acms-admin-form-width-full': acmscss })}>{`{${item.name}}`}</textarea>
@@ -280,7 +275,7 @@ export default class UnitSource extends Component {
             );
           } else if (item.type === 'rich-editor') {
             return (
-              <Tr className={((value==="color") ? "colorList" : "")}>
+              <Tr className={(value === "color")? "color" : ""}>
                 {this.renderTh(item, acmscss)}
                 <Td>
                   <ConditionalWrap
@@ -305,7 +300,7 @@ export default class UnitSource extends Component {
             );
           } else if (item.type === 'table') {
             return (
-              <Tr className={((value==="color") ? "colorList" : "")}>
+              <Tr className={(value === "color")? "color" : ""}>
                 {this.renderTh(item, acmscss)}
                 <Td>
                   <div className="js-editable-table-field">
@@ -332,7 +327,7 @@ export default class UnitSource extends Component {
               </Tr>
             );
           } else if (item.type === 'media') {
-            return (<Tr className={((value==="color") ? "colorList" : "")}>
+            return (<Tr className={(value === "color")? "color" : ""}>
               {this.renderTh(item)}
               <Td className="js-media-field">
                 {!item.useDropArea && <Fragment>

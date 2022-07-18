@@ -7,7 +7,7 @@ import xml from "highlight.js/lib/languages/xml";
 import 'highlight.js/styles/default.css';
 import 'highlight.js/styles/xcode.css';
 
-import FieldSource from './normal/field-source';
+import FieldSource from './normal/field-source'
 import FieldConfirmSource from './normal/field-confirm-source';
 import FieldGroupSource from './group/field-group-source';
 import FieldGroupConfirmSource from './group/field-group-confirm-source';
@@ -15,6 +15,9 @@ import UnitSource from './unit/unit-source';
 import UnitConfirmSource from './unit/unit-confirm-source';
 import UnitGroupSource from './unit-group/unit-group-source';
 import UnitGroupConfirmSource from './unit-group/unit-group-confirm-source';
+
+
+
 
 hljs.registerLanguage("xml", xml);
 const entities = new XmlEntities();
@@ -29,7 +32,7 @@ export default class Think extends Component {
         };
       }
 
-      selectByEditMode(mode,editMode){
+      selectByEditMode(mode,editMode,value){
         //どのプレビューにするか
 
         if(editMode === "source"){
@@ -46,7 +49,7 @@ export default class Think extends Component {
       }
 
       isSource(mode){
-        let{ customfield , acmscss , newUnit , groupitems, jsValidator , groupTitle , groupName , direction ,value ,customunit ,unitgroupitems, unitGroupTitle, unitGroupName} = this.props;
+        let{ customfield , acmscss , newUnit , groupitems, jsValidator , groupTitle , groupName , direction ,value ,customunit ,unitgroupitems, unitGroupTitle, unitGroupName } = this.props;
         switch(mode){
           case "normal":
             this.state.type = this.arrangeElement(<FieldSource customfield={customfield} acmscss={acmscss}  type={newUnit} value={value}/>);  
@@ -59,7 +62,6 @@ export default class Think extends Component {
             break;
           case "unit-group":
             this.state.type = this.arrangeElement(<UnitGroupSource unitgroupitems={unitgroupitems} acmscss={acmscss} unitGroupTitle={unitGroupTitle} unitGroupName={unitGroupName} preview direction={direction} value={value}/>);
-            console.log(this.state.type+"jb")
             break;
         }
       }
@@ -83,7 +85,7 @@ export default class Think extends Component {
       }
 
       isConfirm(mode){
-        let{ customfield , acmscss , newUnit , value , groupitems , groupTitle , groupName , direction , jsValidator , customunit ,unitgroupitems, unitGroupTitle, unitGroupName} = this.props;
+        let{ customfield ,acmscss , value , groupitems , groupTitle , groupName , direction , customunit ,unitgroupitems, unitGroupTitle, unitGroupName} = this.props;
         switch(mode){
           case "normal":
             this.state.type = this.arrangeElement(<FieldConfirmSource customfield={customfield} acmscss={acmscss} value={value}/>);
@@ -122,22 +124,12 @@ export default class Think extends Component {
         return element;
       }
 
-      
 
   render(){
 
-      let { editMode , mode , value , source } = this.props;
-
-      var variableValue=[];
-      var classicValue;
-      var modanValue;
-      var colorValue; 
-     
-      selectValueSituation(value);
-      this.state.type = variableValue;
+    let{ customfield , acmscss , newUnit , groupitems, jsValidator , groupTitle , groupName , direction ,value ,customunit ,unitgroupitems, unitGroupTitle, unitGroupName ,mode,editMode} = this.props;
+ 
       this.selectByEditMode(mode,editMode,value);
-
-
 
       return(
          <div>
@@ -146,19 +138,7 @@ export default class Think extends Component {
       );
 
       
-      function selectValueSituation(value){
-      //バリューを変えて選択された状態を保持する
-        switch(value){
-          case "classic":
-          variableValue = classicValue;
-          break;
-        case "modan":
-          variableValue = modanValue;
-          break;
-        case "color":
-          variableValue = colorValue;
-          break;
-    }
+
   }
 
   
@@ -173,13 +153,6 @@ export default class Think extends Component {
 
 
 
-
-
-
-
-
-
-}
 
 
 

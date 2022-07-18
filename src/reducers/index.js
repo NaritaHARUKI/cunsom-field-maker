@@ -7,7 +7,6 @@ const initialState = {
   customunit: [],
   unitgroupitems: [],
   snippets: [],
-  type : [],
   groupTitle: null,
   groupName: null,
   unitGroupTitle: null,

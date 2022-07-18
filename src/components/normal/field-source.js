@@ -18,6 +18,7 @@ export default class FieldSource extends Component {
 
   renderValidator(item, acmscss) {
     const { preview, jsValidator } = this.props;
+    
 
     if (!item.openValidator) {
       return null;
@@ -36,7 +37,9 @@ export default class FieldSource extends Component {
             <input type="hidden" name={`${name}:v#${validator.option}`} value={validator.value} id={`${name}-v-${validator.option}`} />
             {!jsValidator && <Fragment>
               {validator.message && <Fragment>
+                {preview ? null : `<!-- BEGIN ${name}:validator#${validator.option} -->`}
                 <p className={classnames({ 'acms-admin-text-error': acmscss })}>{validator.message}</p>
+                {preview ? null : `<!-- END ${name}:validator#${validator.option} -->`}
               </Fragment>}
             </Fragment>}
             {jsValidator &&
@@ -71,10 +74,10 @@ export default class FieldSource extends Component {
         Th = "th";
         break;
       case "modan":
-        Th = "lavel";
+        Th = "label";
         break;
       case "color":
-        Th = "lavel";
+        Th = "label";
         break;
     }
 
@@ -94,38 +97,36 @@ export default class FieldSource extends Component {
   }
 
   render() {
-    const { acmscss, customfield, jsValidator , value} = this.props;
-    let Element = "table";
+    const { acmscss, customfield, preview, jsValidator, value} = this.props;
+    let Table = "table";
     let Tr = "tr";
-    let Td = "td"
-     
+    let Td = "td";
+
     switch(value){
       case "classic":
-        Element = "table";
+        Table = "table";
         Tr = "tr";
-        Td = "div";
+        Td = "td";
         break;
       case "modan":
-        Element = "ul";
-        Tr = "li"
-        Td = "div";
-        break;
-      case "color":
-        Element = "ul";
+        Table = "ul";
         Tr = "li";
         Td = "div";
         break;
+      case "color":
+        Table = "ul";
+        Tr = "li";
+        Td = "div"
+        break;
     }
-
-
 
     return (
       <Fragment>
         {jsValidator && '<!-- <form action="" method="post" class="js-validator" enctype="multipart/form-data"> -->'}
-        <Element className={classnames({ 'acms-admin-table-admin-edit': acmscss })} ref={(table => this.table = table)}>
+        <Table className={classnames({ 'acms-admin-table-admin-edit': acmscss })} ref={(table => this.table = table)}>
           {customfield.map((item, index) => {
             if (item.type === 'text') {
-              return (<Tr key={index}  className={((value==="color") ? "colorList" : "")}>
+              return (<Tr key={index} className={(value === "color")? "color" : ""}>
                 {this.renderTh(item, acmscss, jsValidator)}
                 <Td>
                   <input type="text" name={item.name} value={`{${item.name}}`} className={classnames({ 'acms-admin-form-width-full': acmscss })} {...(jsValidator ? { 'data-validator': item.name } : {})} />
@@ -136,7 +137,7 @@ export default class FieldSource extends Component {
               </Tr>);
             } else if (item.type === 'textarea') {
               return (
-                <Tr key={index} className={((value==="color") ? "colorList" : "")}>
+                <Tr key={index}  className={(value === "color")? "color" : ""}>
                   {this.renderTh(item, acmscss)}
                   <Td>
                     <textarea name={item.name} className={classnames({ 'acms-admin-form-width-full': acmscss })} {...(jsValidator ? { 'data-validator': item.name } : {})}>{`{${item.name}}`}</textarea>
@@ -148,7 +149,7 @@ export default class FieldSource extends Component {
               );
             } else if (item.type === 'lite-editor') {
               return (
-                <Tr key={index} className={((value==="color") ? "colorList" : "")}>
+                <Tr key={index}  className={(value === "color")? "color" : ""}>
                   {this.renderTh(item, acmscss)}
                   <Td>
                     <textarea name={item.name} className={classnames('js-lite-editor-field', { 'acms-admin-form-width-full': acmscss })} {...(jsValidator ? { 'data-validator': item.name } : {})}>{`{${item.name}}`}</textarea>
@@ -160,7 +161,7 @@ export default class FieldSource extends Component {
               );
             } else if (item.type === 'rich-editor') {
               return (
-                <Tr key={index} className={((value==="color") ? "colorList" : "")}>
+                <Tr key={index}  className={(value === "color")? "color" : ""}>
                   {this.renderTh(item, acmscss)}
                   <Td>
                     <ConditionalWrap
@@ -185,7 +186,7 @@ export default class FieldSource extends Component {
               );
             } else if (item.type === 'table') {
               return (
-                <Tr key={index} className={((value==="color") ? "colorList" : "")}>
+                <Tr key={index}  className={(value === "color")? "color" : ""}>
                   {this.renderTh(item, acmscss)}
                   <Td>
                     <div className="js-editable-table-field">
@@ -213,7 +214,7 @@ export default class FieldSource extends Component {
               );
             } else if (item.type === 'select') {
               return (
-                <Tr key={index} className={((value==="color") ? "colorList" : "")}>
+                <Tr key={index}  className={(value === "color")? "color" : ""}>
                   {this.renderTh(item, acmscss)}
                   <Td>
                     <select name={item.name} className={classnames({ 'acms-admin-form-width-full': acmscss })}>
@@ -233,7 +234,7 @@ export default class FieldSource extends Component {
               );
             } else if (item.type === 'radio') {
               return (
-                <Tr key={index} className={((value==="color") ? "colorList" : "")}>
+                <Tr key={index}  className={(value === "color")? "color" : ""}>
                   {this.renderTh(item)}
                   <Td>
                     {item.option.map((option) => {
@@ -258,7 +259,7 @@ export default class FieldSource extends Component {
               );
             } else if (item.type === 'checkbox') {
               return (
-                <Tr key={index} className={((value==="color") ? "colorList" : "")}>
+                <Tr key={index}  className={(value === "color")? "color" : ""}>
                   {this.renderTh(item)}
                   <Td>
                     {item.option.map((option) => {
@@ -282,7 +283,7 @@ export default class FieldSource extends Component {
                 </Tr>
               );
             } else if (item.type === 'image') {
-              return (<Tr key={index} className={((value==="color") ? "colorList" : "")}>
+              return (<Tr key={index}  className={(value === "color")? "color" : ""}>
                 {this.renderTh(item)}
                 <Td className={classnames({ 'js-img_resize_cf': item.resize })}>
                   {preview ? null : `<!-- BEGIN_IF [{${item.name}@path}/nem] -->`}
@@ -318,7 +319,7 @@ export default class FieldSource extends Component {
                 </Td>
               </Tr>);
             } else if (item.type === 'media') {
-              return (<Tr key={index} className={((value==="color") ? "colorList" : "")}>
+              return (<Tr key={index}  className={(value === "color")? "color" : ""}>
                 {this.renderTh(item)}
                 <Td className="js-media-field">
                   {!item.useDropArea && <Fragment>
@@ -384,7 +385,7 @@ export default class FieldSource extends Component {
                 src += 'file.svg';
               }
 
-              return (<Tr key={index} className={((value==="color") ? "colorList" : "")}>
+              return (<Tr key={index}  className={(value === "color")? "color" : ""}>
                 {this.renderTh(item, acmscss)}
                 <Td>
                   {preview ? null : `<!-- BEGIN ${item.name}@path:veil -->`}
@@ -412,7 +413,7 @@ export default class FieldSource extends Component {
               </Tr>);
             }
           })}
-        </Element>
+        </Table>
         {jsValidator && '<!-- </form> -->'}
       </Fragment>
     );
